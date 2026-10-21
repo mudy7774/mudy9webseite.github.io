@@ -2,429 +2,72 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Mohamad Issa - Media Informatics & UX/UI Designer. Ich schaffe wunderschöne digitale Erlebnisse mit Fokus auf Benutzerfreundlichkeit und modernes Design.">
-    <meta name="keywords" content="UX/UI Design, Webentwicklung, Portfolio, Designer, Frontend">
-    <meta property="og:title" content="Mohamad Issa | Media Informatics & UX/UI Designer">
-    <meta property="og:description" content="Ich schaffe wunderschöne digitale Erlebnisse mit Fokus auf Benutzerfreundlichkeit und modernes Design.">
-    <meta property="og:image" content="img/preview.jpg">
-    <meta property="og:type" content="website">
-    <title>Mohamad Issa | Media Informatics & UX/UI Designer</title>
-    <link rel="stylesheet" href="fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="fonts/fonts.css">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="MI Studio von Mohamad Issa – Media Informatics & UX/UI Designer. Ein 3D-Design-Studio, in dem jeder Bildschirm einen Teil meiner Website zeigt.">
+    <title>MI Studio | Mohamad Issa</title>
+        <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="studio.css">
 </head>
 <body>
-    <div class="cursor"></div>
-    <div class="cursor-dot"></div>
-
-    <div class="loader">
-        <div class="loader-logo">Mohamad Issa
-        </div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
-    </div>
-
-    <canvas id="particles-canvas"></canvas>
-
-    <nav id="navbar">
-       <div class="scroll-progress" id="scrollProgress"></div>
-        <div class="nav-container">
-            <a href="#" class="logo">Mohamad Issa</a>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#portfolio">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#contact" class="nav-cta">Contact</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="meno" aria-label="Mobile Navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-    <section class="hero" id="home">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="dot"></span>
-                    Verfügbar für Freelance-Arbeiten
-                </div>
-                <h1>Hi, ich bin <span class="gradient-text">Mohamad Issa</span></h1>
-                <div class="hero-typewriter">
-                    <span id="typewriter"></span><span class="cursor-blink"></span>
-                </div>
-                <p class="hero-description">
-                    Ich schaffe wunderschöne digitale Erlebnisse. 
-                    Spezialisiert auf UX/UI Design, Webentwicklung und Lösungen, 
-                    die einen echten Unterschied für Unternehmen machen.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#portfolio" class="btn btn-primary">
-                        <i class="fas fa-folder-open"></i> Projekte ansehen
-                    </a>
-                    <a href="#contact" class="btn btn-secondary">
-                        <i class="fas fa-paper-plane"></i> Kontakt
-                    </a>
-                </div>
-                <div class="hero-social">
-                    <a href="https://github.com/dein-username" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://linkedin.com/in/mohamad-issa-35660a3a6/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://instagram.com/mudy_iss/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://twitter.com/dein-username" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="mouse"></div>
-            <span>Nach unten scrollen</span>
-        </div>
-    </section>
-
-    <section class="about" id="about">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-tag">Über mich</div>
-                <h2 class="section-title">Leidenschaft für <span class="highlight">impactful</span> digitale Erlebnisse</h2>
-                <p class="section-subtitle">Medieninformatik-Student mit Fokus auf UX/UI Design</p>
-            </div>
-            <div class="about-grid">
-                <div class="about-image reveal">
-                    <div class="about-image-main">
-                        <img src="img/straße line.jpeg" alt="Mohamad Issa - Professionelles Porträt">
-                    </div>
-                    <div class="about-image-secondary">
-                        <img src="img/straße.jpeg" alt="Mohamad Issa - Casual Foto">
-                    </div>
-                </div>
-                <div class="about-content reveal">
-                    <h3>Ideen in Realität verwandeln durch Design & Code</h3>
-                         
-                    <p>
-                        Ich studiere Medieninformatik mit Schwerpunkt auf Benutzerfreundlichkeit und Interface Design.
-                    </p>
-                     <p>
-                        Derzeit absolviere ich ein Praktikum bei Landsiedel NLP Training, wo ich erforsche,
-                         wie Sprache, Psychologie und digitale Produkte zusammenwirken. Mein Ziel ist es,
-                          Erlebnisse zu schaffen, die nicht nur perfekt funktionieren, sondern sich auch großartig anfühlen.
-                    </p>
-                    
-                    <p>
-                        Wenn ich nicht gerade designen oder programmieren bin,
-                         findet man mich beim Reisen, Lesen, Sport oder Schachspielen.
-                          Ich glaube an kontinuierliches Lernen und neue Perspektiven für jedes Projekt.
-                    </p>
-                    <div class="about-features">
-                        <div class="feature-item">
-                            <div class="icon"><i class="fas fa-laptop-code"></i></div>
-                            <div>
-                                <h4>Webentwicklung</h4>
-                                <p>Modern & Responsiv</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="icon"><i class="fas fa-paint-brush"></i></div>
-                            <div>
-                                <h4>UX/UI Design</h4>
-                                <p>Nutzerzentriert</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="icon"><i class="fas fa-search"></i></div>
-                            <div>
-                                <h4>SEO Optimierung</h4>
-                                <p>Top Ranking</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="services" id="services">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-tag">Meine Services</div>
-                <h2 class="section-title">Was ich für Sie <span class="highlight">tun kann</span></h2>
-                <p class="section-subtitle">Professionelle Webdesign- und Entwicklungsservices nach Ihren Anforderungen</p>
-            </div>
-            <div class="services-grid">
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
-                    <h3>Webdesign</h3>
-                    <p>Modern, responsive und benutzerfreundliche Websites, die Ihre Marke perfekt repräsentieren und Ihr Publikum engagieren.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
-                    <h3>UX/UI Design</h3>
-                    <p>Intuitive und schöne Schnittstellen mit Fokus auf Nutzer. Erlebnisse schaffen, die Besucher zu Kunden konvertieren.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <h3>Responsive Design</h3>
-                    <p>Websites, die auf allen Geräten perfekt aussehen und funktionieren - Desktop, Tablet und Mobil. Nahtlose Erlebnisse überall.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-search"></i></div>
-                    <h3>SEO Optimierung</h3>
-                    <p>Verbessern Sie die Sichtbarkeit Ihrer Website in Suchmaschinen und erreichen Sie mehr potenzielle Kunden organisch.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-shopping-cart"></i></div>
-                    <h3>E-Commerce</h3>
-                    <p>Professionelle Online-Shops, die Ihnen helfen, Produkte zu verkaufen und Ihr Geschäft mit sicherer Zahlungsintegration zu wachsen.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-tools"></i></div>
-                    <h3>Wartung</h3>
-                    <p>Fortlaufende Unterstützung und Updates für reibungslosen, sicheren Betrieb und aktuelle Trends auf Ihrer Website.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-<div class="marquee-container">
-    <div class="marquee-content">
-        <span>UX/UI DESIGN • WEB DEVELOPMENT • MEDIA INFORMATICS • Mohamad Issa •  </span>
-        <span>UX/UI DESIGN • WEB DEVELOPMENT • MEDIA INFORMATICS • Mohamad Issa •  </span>
-    </div>
+<div id="loader" role="status" aria-label="Studio wird geladen">
+  <div class="ld-logo"><svg viewBox="0 0 64 52" aria-hidden="true"><rect class="ld-frame" x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path class="ld-m" d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#eef0fa"/><rect class="ld-i" x="45" y="20" width="6" height="20" fill="#eef0fa"/><rect class="ld-dot" x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg></div>
+  <div class="ld-name">MI STUDIO</div>
+  <div class="ld-bar"><i id="ldBar"></i></div>
+  <div class="ld-txt">Studio wird aufgebaut …</div>
 </div>
-       <!-- Portfolio Section -->
-    <section class="portfolio" id="portfolio">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-tag">Portfolio</div>
-                <h2 class="section-title">Meine <span class="highlight">Projekte</span></h2>
-                <p class="section-subtitle">Entdecke einige meiner neuesten Arbeiten und UX/UI-Konzepte</p>
-            </div>
-            
-            <div class="portfolio-grid">
-                
-                <!-- Projekt 1: NLP / Learning Platform -->
-                <div class="portfolio-card reveal">
-                    <div class="portfolio-preview" style="background: url('img/projekt-1.jpg') center/cover no-repeat;">
-                        <!-- Dunkles Overlay, damit das Icon sichtbar ist, falls das Bild mal nicht lädt -->
-                        <div style="position:absolute; inset:0; background:rgba(15,23,42,0.4);"></div>
-                        <span class="portfolio-number" style="color:white; z-index:2;">01</span>
-                    </div>
-                    <div class="portfolio-content">
-                        <span class="portfolio-category">UX/UI Design & Konzept</span>
-                        <h3>NLP Lernplattform Redesign</h3>
-                        <p>
-                            Konzeption einer intuitiven Lernumgebung für NLP-Training. Fokus auf barrierefreies Design, 
-                            klare Informationsarchitektur und eine nutzerzentrierte Onboarding-Experience.
-                        </p>
-                        <a href="#contact" class="portfolio-link">
-                            Case Study ansehen <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="css3d"></div>
 
-                <!-- Projekt 2: E-Commerce -->
-                <div class="portfolio-card reveal">
-                    <div class="portfolio-preview" style="background: url('img/projekt-2.jpg') center/cover no-repeat;">
-                        <div style="position:absolute; inset:0; background:rgba(15,23,42,0.4);"></div>
-                        <span class="portfolio-number" style="color:white; z-index:2;">02</span>
-                    </div>
-                    <div class="portfolio-content">
-                        <span class="portfolio-category">E-Commerce & UI Design</span>
-                        <h3>Sustainable Fashion Store</h3>
-                        <p>
-                            Fiktives UI/UX-Konzept für einen nachhaltigen Mode-Online-Shop. Entwickelt mit Fokus 
-                            auf Mobile-First, klare Typografie und optimierten Checkout-Prozess.
-                        </p>
-                        <a href="#contact" class="portfolio-link">
-                            Konzept ansehen <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+<div class="hud">
+  <a class="logo" href="#s0" aria-label="MI Studio, zum Anfang"><svg viewBox="0 0 64 52" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#eef0fa"/><rect x="45" y="20" width="6" height="20" fill="#eef0fa"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg>MI Studio <small>· Mohamad Issa</small></a>
+  <div class="hud-right">
+    <div class="ctrl">
+      <button type="button" id="tourBtn" aria-pressed="false" aria-label="Automatische Tour starten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Tour</span></button>
+      <button type="button" id="modeBtn" aria-pressed="false" aria-label="Zum Sonnenuntergang wechseln"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Abend</span></button>
+      <button type="button" id="soundBtn" aria-pressed="false" aria-label="Ton einschalten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a7.5 7.5 0 010 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Ton</span></button>
+    </div>
+    <div class="room"><span class="led"></span><span class="lbl">Raum</span><b id="roomName">Eingang</b></div>
+  </div>
+</div>
+<div class="tip" id="tip">Alles auf dem Bildschirm ist klickbar · Weiter mit „Weiter ↓“</div>
+<div class="prog"><span>Studio</span><div class="rail"><i id="bar"></i><div class="ticks" id="ticks"></div></div>
+  <div class="nav"><button type="button" id="prev" aria-label="Vorheriger Raum">↑ Zurück</button><button type="button" id="next" aria-label="Nächster Raum">Weiter ↓</button></div></div>
 
-                <!-- Projekt 3: Corporate / B2B -->
-                <div class="portfolio-card reveal">
-                    <div class="portfolio-preview" style="background: url('img/projekt-3.jpg') center/cover no-repeat;">
-                        <div style="position:absolute; inset:0; background:rgba(15,23,42,0.4);"></div>
-                        <span class="portfolio-number" style="color:white; z-index:2;">03</span>
-                    </div>
-                    <div class="portfolio-content">
-                        <span class="portfolio-category">Corporate Webdesign</span>
-                        <h3>Tech Startup Landing Page</h3>
-                        <p>
-                            Modernes Redesign einer B2B-Start-up-Website. Ziel: Erhöhung der Conversion-Rate 
-                            durch gezieltes Storytelling, interaktive Elemente und responsives Layout.
-                        </p>
-                        <a href="#contact" class="portfolio-link">
-                            Redesign ansehen <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+<main>
+  <section class="stop" id="s0" data-name="Eingang">
+    <div class="intro" id="intro">
+      <div class="kicker">MI Studio · Medieninformatik · UX/UI Design</div>
+      <h1>Willkommen in meinem <span>Studio</span></h1>
+      <p>Ich bin Mohamad Issa. Gehen Sie durch mein Studio: Jeder Bildschirm zeigt einen Teil meiner Website, und alles darauf ist klickbar.</p>
+      <div class="walk">Scrollen, um durchs Studio zu gehen<b></b></div>
+      <p class="classic">Lieber klassisch? <a href="website.html">Zur normalen Website</a> · <a href="making-of.html">Wie ich das gebaut habe</a></p>
+    </div>
+  </section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s1" data-name="Start" data-hash="#home"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s2" data-name="Über mich" data-hash="#about"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s3" data-name="Services" data-hash="#services"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s4" data-name="Projekte" data-hash="#portfolio"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s5" data-name="So arbeite ich" data-hash="#prozess"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s6" data-name="Skills" data-hash="#skills"></section>
+  <div class="gap" aria-hidden="true"></div>
+  <section class="stop" id="s7" data-name="Kontakt" data-hash="#contact"></section>
+</main>
+<footer>© 2026 Mohamad Issa · MI Studio · <a href="website.html">Klassische Ansicht</a> · <a href="making-of.html">Making-of</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></footer>
 
-            </div>
-        </div>
-    </section>
-
-    <section class="skills" id="skills">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-tag">Meine Fähigkeiten</div>
-                <h2 class="section-title">Technische <span class="highlight">Expertise</span></h2>
-                <p class="section-subtitle">Technologien und Tools, mit denen ich arbeite</p>
-            </div>
-            <div class="skills-container">
-                <div class="skills-left reveal">
-                    <h3>Tools & Technologien</h3>
-                    <p>
-                        Ich lerne kontinuierlich neue Technologien, um die besten Ergebnisse 
-                        für meine Kunden zu liefern. Hier sind die Tools und Technologien, 
-                        mit denen ich täglich arbeite.
-                    </p>
-                    <div class="skills-list">
-                        <span class="skill-tag">HTML5</span>
-                        <span class="skill-tag">CSS3</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">React</span>
-                        <span class="skill-tag">Vue.js</span>
-                        <span class="skill-tag">Node.js</span>
-                        <span class="skill-tag">Figma</span>
-                        <span class="skill-tag">Adobe XD</span>
-                        <span class="skill-tag">Photoshop</span>
-                        <span class="skill-tag">WordPress</span>
-                        <span class="skill-tag">Shopify</span>
-                        <span class="skill-tag">Git</span>
-                        <span class="skill-tag">TypeScript</span>
-                        <span class="skill-tag">Tailwind CSS</span>
-                    </div>
-                </div>
-                <div class="skills-right reveal">
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>HTML/CSS</h4>
-                            <span class="skill-percent">95%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="95"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>JavaScript</h4>
-                            <span class="skill-percent">88%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="88"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>UX/UI Design</h4>
-                            <span class="skill-percent">92%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="92"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>Figma/Adobe XD</h4>
-                            <span class="skill-percent">90%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="90"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>Responsive Design</h4>
-                            <span class="skill-percent">95%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="95"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <h4>WordPress</h4>
-                            <span class="skill-percent">85%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="85"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-        <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-tag">Kontakt</div>
-                <h2 class="section-title">Lassen Sie uns <span class="highlight">zusammenarbeiten</span></h2>
-                <p class="section-subtitle">Sie haben ein Projekt im Sinn? Ich freue mich darauf, von Ihnen zu hören.</p>
-            </div>
-            
-            <div class="contact-grid">
-                <!-- Linke Seite: Haupt Call-to-Action -->
-                <div class="contact-cta-box reveal">
-                    <div class="cta-icon">
-                        <i class="fas fa-paper-plane"></i>
-                    </div>
-                    <h3>Bereit für das nächste Projekt?</h3>
-                    <p>
-                        Lassen Sie uns direkt sprechen. Schicken Sie mir eine E-Mail mit einer kurzen Beschreibung Ihrer Idee, 
-                        und ich melde mich in der Regel innerhalb von 24 Stunden bei Ihnen.
-                    </p>
-                    <a href="mailto:mohamad95issa@gmail.com?subject=Projektanfrage%20über%20Ihre%20Webseite" class="btn btn-primary btn-glow">
-                        <i class="fas fa-envelope"></i> Jetzt E-Mail schreiben
-                    </a>
-                </div>
-
-                <!-- Rechte Seite: Info-Karten -->
-                <div class="contact-info-stack reveal">
-                    <div class="contact-card">
-                        <div class="icon"><i class="fas fa-envelope"></i></div>
-                        <div class="card-text">
-                            <h3>Email</h3>
-                            <a href="mailto:mohamad95issa@gmail.com">mohamad95issa@gmail.com</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="card-text">
-                            <h3>Standort</h3>
-                            <p>Deutschland (Remote & Vor Ort)</p>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-card">
-                        <div class="icon"><i class="fas fa-clock"></i></div>
-                        <div class="card-text">
-                            <h3>Verfügbarkeit</h3>
-                            <p>Offen für neue Projekte ab sofort</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-
-    <footer>
-        <div class="social-links">
-            <a href="https://github.com/dein-username" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
-            <a href="https://linkedin.com/in/mohamad-issa-35660a3a6/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-            <a href="https://instagram.com/mudy_iss/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://twitter.com/dein-username" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="https://dribbble.com/dein-username" target="_blank" rel="noopener noreferrer" aria-label="Dribbble"><i class="fab fa-dribbble"></i></a>
-        </div>
-        <p>&copy; 2026 Mohamad Issa. Alle Rechte vorbehalten. | Designed & Built with ❤️</p>
-    </footer>
-<button id="backToTop" class="back-to-top" aria-label="Nach oben scrollen">
-    <i class="fas fa-arrow-up"></i>
-</button>
-    <script src="script.js"></script>
+<script src="lib/three/build/three.min.js"></script>
+<script src="lib/three/examples/js/objects/Reflector.js"></script>
+<script src="lib/three/examples/js/shaders/CopyShader.js"></script>
+<script src="lib/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="lib/three/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="lib/three/examples/js/postprocessing/RenderPass.js"></script>
+<script src="lib/three/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="lib/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="studio.js"></script>
 </body>
 </html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Datenschutzerklärung von Mohamad Issa.">
+    <title>Datenschutz | Mohamad Issa</title>
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+<header class="topbar">
+    <div class="wrap">
+        <a class="brand" href="index.html"><svg viewBox="0 0 64 52" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#eef0fa"/><rect x="45" y="20" width="6" height="20" fill="#eef0fa"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg>MI Studio</a>
+        <nav aria-label="Navigation">
+            <a href="index.html">3D-Studio</a>
+            <a href="website.html#portfolio">Projekte</a>
+            <a href="making-of.html">Making-of</a>
+            <a href="website.html#contact">Kontakt</a>
+        </nav>
+    </div>
+</header>
+<main>
+<div class="wrap narrow legal">
+  <section class="hero">
+    <span class="tag">Rechtliches</span>
+    <h1>Datenschutzerklärung</h1>
+    <p class="callout">Hinweis an dich, Mohamad: Ersetze alle gelben Stellen, vor allem deinen Hosting-Anbieter. Diese Vorlage ersetzt keine Rechtsberatung. Prüfe sie im Zweifel, zum Beispiel mit dem Generator von e-recht24.de.</p>
+  </section>
+  <h2>1. Verantwortlicher</h2>
+  <p>Mohamad Issa<br><mark class="todo">✏️ Anschrift wie im Impressum</mark><br>E-Mail: <a href="mailto:mohamad95issa@gmail.com">mohamad95issa@gmail.com</a></p>
+  <h2>2. Das Wichtigste in Kürze</h2>
+  <ul>
+    <li>Diese Website setzt keine Cookies und nutzt kein Tracking und keine Analyse-Tools.</li>
+    <li>Schriften, Icons und Programmbibliotheken liegen auf meinem eigenen Server. Es werden keine Daten an Google Fonts oder andere CDNs übertragen.</li>
+    <li>Klänge im 3D-Studio werden im Browser erzeugt und erst nach einem Klick aktiviert.</li>
+  </ul>
+  <h2>3. Hosting und Server-Logfiles</h2>
+  <p>Diese Website wird bei <mark class="todo">✏️ Name und Anschrift deines Hosting-Anbieters, z. B. Netlify, GitHub Pages oder Strato</mark> gehostet. Beim Aufruf speichert der Server automatisch technische Daten, die dein Browser übermittelt: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browser und Betriebssystem. Das ist technisch nötig, um die Website sicher und stabil auszuliefern (Art. 6 Abs. 1 lit. f DSGVO). <mark class="todo">✏️ Speicherdauer laut Hoster ergänzen</mark></p>
+  <h2>4. Kontakt per E-Mail</h2>
+  <p>Wenn du mir eine E-Mail schreibst, verarbeite ich deine Angaben, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO bei Projektanfragen, sonst lit. f). Die Daten lösche ich, sobald sie nicht mehr gebraucht werden, sofern keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
+  <h2>5. Links zu sozialen Netzwerken</h2>
+  <p>Die Symbole für LinkedIn und Instagram sind einfache Links. Erst wenn du sie anklickst, wirst du zum jeweiligen Netzwerk weitergeleitet, und dort gelten dessen Datenschutzbestimmungen.</p>
+  <h2>6. Deine Rechte</h2>
+  <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel in deinem Bundesland.</p>
+  <p>Stand: Oktober 2026</p>
+</div>
+</main>
+<footer>
+    <div class="wrap">
+        <span>&copy; 2026 Mohamad Issa</span>
+        <nav aria-label="Rechtliches">
+            <a href="impressum.html">Impressum</a>
+            <a href="datenschutz.html">Datenschutz</a>
+        </nav>
+    </div>
+</footer>
+<script>
+/* Bilder, die noch fehlen, werden automatisch als Platzhalter angezeigt */
+document.querySelectorAll('.shot img').forEach(function(img){
+  function empty(){ img.closest('.shot').classList.add('empty'); }
+  img.addEventListener('error', empty);
+  if(img.complete && img.naturalWidth === 0) empty();
+});
+</script>
+</body>
+</html>

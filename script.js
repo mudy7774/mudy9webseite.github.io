@@ -237,25 +237,27 @@ document.querySelectorAll('.reveal').forEach(el => {
 // SKILL BARS ANIMATION
 // ========================
 
-// Observe each bar individually: on mobile the stacked section is taller
-// than the viewport, so a 50% threshold on the whole section never fires.
 const skillObserverOptions = {
-    threshold: 0.1
+    threshold: 0.5
 };
 
 const skillObserver = new IntersectionObserver(function(entries) {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            const bar = entry.target;
-            bar.style.width = bar.getAttribute('data-width') + '%';
-            skillObserver.unobserve(bar);
+            const progressBars = entry.target.querySelectorAll('.skill-progress');
+            progressBars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                bar.style.width = width + '%';
+            });
+            skillObserver.unobserve(entry.target);
         }
     });
 }, skillObserverOptions);
 
-document.querySelectorAll('.skill-progress').forEach(bar => {
-    skillObserver.observe(bar);
-});
+const skillsSection = document.querySelector('.skills');
+if (skillsSection) {
+    skillObserver.observe(skillsSection);
+}
 
 // ========================
 // COUNTER ANIMATION
@@ -343,6 +345,7 @@ const translations = {
         contactBtn: 'Kontakt',
         aboutBtn: 'Über mich',
         servicesBtn: 'Services',
+        testimonialsBtn: 'Testimonials',
         skillsBtn: 'Fähigkeiten',
         contactSectionBtn: 'Kontakt'
     },
@@ -353,6 +356,7 @@ const translations = {
         contactBtn: 'Contact',
         aboutBtn: 'About',
         servicesBtn: 'Services',
+        testimonialsBtn: 'Testimonials',
         skillsBtn: 'Skills',
         contactSectionBtn: 'Contact'
     }
