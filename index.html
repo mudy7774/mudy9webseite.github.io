@@ -3,71 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="MI Studio von Mohamad Issa – Media Informatics & UX/UI Designer. Ein 3D-Design-Studio, in dem jeder Bildschirm einen Teil meiner Website zeigt.">
-    <title>MI Studio | Mohamad Issa</title>
-        <link rel="stylesheet" href="fonts/fonts.css">
-    <link rel="stylesheet" href="studio.css">
+    <meta name="description" content="Mohamad Issa – Medieninformatik, UX/UI Design und Webentwicklung. Designer und Entwickler in einer Person.">
+    <meta property="og:title" content="Mohamad Issa | Design & Code">
+    <meta property="og:description" content="Medieninformatik, UX/UI Design und Webentwicklung.">
+    <meta property="og:image" content="img/preview.jpg">
+    <title>Mohamad Issa | Design & Code</title>
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="cine.css">
 </head>
 <body>
-<div id="loader" role="status" aria-label="Studio wird geladen">
-  <div class="ld-logo"><svg viewBox="0 0 64 52" aria-hidden="true"><rect class="ld-frame" x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path class="ld-m" d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#eef0fa"/><rect class="ld-i" x="45" y="20" width="6" height="20" fill="#eef0fa"/><rect class="ld-dot" x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg></div>
-  <div class="ld-name">MI STUDIO</div>
-  <div class="ld-bar"><i id="ldBar"></i></div>
-  <div class="ld-txt">Studio wird aufgebaut …</div>
+<div id="loader" role="status" aria-label="Seite wird geladen">
+  <svg viewBox="0 0 64 52" aria-hidden="true"><rect class="ld-f" x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><g class="ld-p"><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#fff"/><rect x="45" y="20" width="6" height="20" fill="#fff"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></g></svg>
+  <span>MI · Design &amp; Code</span>
 </div>
-<canvas id="gl" aria-hidden="true"></canvas>
-<div id="css3d"></div>
 
-<div class="hud">
-  <a class="logo" href="#s0" aria-label="MI Studio, zum Anfang"><svg viewBox="0 0 64 52" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#eef0fa"/><rect x="45" y="20" width="6" height="20" fill="#eef0fa"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg>MI Studio <small>· Mohamad Issa</small></a>
-  <div class="hud-right">
-    <div class="ctrl">
-      <button type="button" id="tourBtn" aria-pressed="false" aria-label="Automatische Tour starten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span>Tour</span></button>
-      <button type="button" id="modeBtn" aria-pressed="false" aria-label="Zum Sonnenuntergang wechseln"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Abend</span></button>
-      <button type="button" id="soundBtn" aria-pressed="false" aria-label="Ton einschalten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a7.5 7.5 0 010 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>Ton</span></button>
-    </div>
-    <div class="room"><span class="led"></span><span class="lbl">Raum</span><b id="roomName">Eingang</b></div>
-  </div>
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="top gutter">
+  <a class="brand" href="#start" aria-label="Mohamad Issa, nach oben"><svg viewBox="0 0 64 52" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#fff"/><rect x="45" y="20" width="6" height="20" fill="#fff"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg><i></i>Mohamad Issa</a>
+  <nav aria-label="Hauptnavigation">
+    <a href="#dual">Über mich</a><a href="#projekte">Projekte</a><a href="#prozess">Prozess</a><a href="#kontakt">Kontakt</a>
+  </nav>
+  <a class="cta" href="#kontakt">Anfragen ↗</a>
+</header>
+
+<div class="hud" aria-hidden="true">
+  <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+  <span class="lab l1"><span class="dot"></span>Signal · <b>Live</b></span>
+  <span class="lab l2">Deutschland · <b id="clock">--:--</b></span>
+  <span class="lab l3">MI-01 · Medieninformatik</span>
+  <span class="lab l4">Kapitel <b id="chap">01</b> / 03</span>
+  <div class="rail"><i id="railBar"></i></div>
 </div>
-<div class="tip" id="tip">Alles auf dem Bildschirm ist klickbar · Weiter mit „Weiter ↓“</div>
-<div class="prog"><span>Studio</span><div class="rail"><i id="bar"></i><div class="ticks" id="ticks"></div></div>
-  <div class="nav"><button type="button" id="prev" aria-label="Vorheriger Raum">↑ Zurück</button><button type="button" id="next" aria-label="Nächster Raum">Weiter ↓</button></div></div>
 
-<main>
-  <section class="stop" id="s0" data-name="Eingang">
-    <div class="intro" id="intro">
-      <div class="kicker">MI Studio · Medieninformatik · UX/UI Design</div>
-      <h1>Willkommen in meinem <span>Studio</span></h1>
-      <p>Ich bin Mohamad Issa. Gehen Sie durch mein Studio: Jeder Bildschirm zeigt einen Teil meiner Website, und alles darauf ist klickbar.</p>
-      <div class="walk">Scrollen, um durchs Studio zu gehen<b></b></div>
-      <p class="classic">Lieber klassisch? <a href="website.html">Zur normalen Website</a> · <a href="making-of.html">Wie ich das gebaut habe</a></p>
+<main id="start">
+  <section class="scene gutter" id="sc1" data-scene="0" style="height:260vh">
+    <div class="pin">
+      <div class="inner">
+        <div class="reveal" data-in="0">
+          <div class="kick">Protokoll 01 · Identität</div>
+          <h1 class="big">Ich bin<br><span class="acc">Mohamad.</span></h1>
+          <p class="sub">Medieninformatik, UX/UI Design und Webentwicklung. Ich gestalte digitale Erlebnisse, die nicht nur funktionieren, sondern sich richtig anfühlen.</p>
+        </div>
+        <div class="quote reveal" data-in=".35">„Gutes Design merkt man nicht. Man fühlt es.“<small>— Mohamad Issa</small></div>
+      </div>
+      <div class="hint" id="hint">Scrollen<i></i></div>
     </div>
   </section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s1" data-name="Start" data-hash="#home"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s2" data-name="Über mich" data-hash="#about"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s3" data-name="Services" data-hash="#services"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s4" data-name="Projekte" data-hash="#portfolio"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s5" data-name="So arbeite ich" data-hash="#prozess"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s6" data-name="Skills" data-hash="#skills"></section>
-  <div class="gap" aria-hidden="true"></div>
-  <section class="stop" id="s7" data-name="Kontakt" data-hash="#contact"></section>
-</main>
-<footer>© 2026 Mohamad Issa · MI Studio · <a href="website.html">Klassische Ansicht</a> · <a href="making-of.html">Making-of</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></footer>
 
-<script src="lib/three/build/three.min.js"></script>
-<script src="lib/three/examples/js/objects/Reflector.js"></script>
-<script src="lib/three/examples/js/shaders/CopyShader.js"></script>
-<script src="lib/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
-<script src="lib/three/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="lib/three/examples/js/postprocessing/RenderPass.js"></script>
-<script src="lib/three/examples/js/postprocessing/ShaderPass.js"></script>
-<script src="lib/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
-<script src="studio.js"></script>
+  <section class="scene gutter" id="sc2" data-scene="1" style="height:260vh">
+    <div class="pin">
+      <div class="inner">
+        <div class="reveal" data-in=".15">
+          <div class="kick">Protokoll 02 · Studio</div>
+          <h2 class="big">Build<br>with <span class="ind">MI&nbsp;Studio</span></h2>
+          <p class="sub">Websites, Apps und Interfaces, gebaut mit Sorgfalt: von der ersten Skizze bis zur letzten Zeile Code.</p>
+        </div>
+        <div class="quote reveal" data-in=".55">„Jede gute Idee beginnt mit einem Funken.“<small>— MI Studio</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene dual gutter" id="dual" data-scene="2" style="height:300vh">
+    <div class="pin">
+      <div class="inner">
+        <div class="txt reveal" data-in=".1">
+          <div class="kick">Protokoll 03 · Über mich</div>
+          <h2 class="big">Zwei Seiten.<br><span class="acc">Eine Person.</span></h2>
+          <p class="sub">Ich verbinde Gestaltung und Technik. Ich denke wie ein Designer und baue wie ein Entwickler, deshalb geht auf dem Weg von der Idee zur fertigen Seite nichts verloren.</p>
+          <div class="sides">
+            <div><h3 class="d">Designer</h3><p>UX Research, Wireframes, Prototypen in Figma, Interface Design</p></div>
+            <div><h3 class="c">Entwickler</h3><p>HTML, CSS, JavaScript, React, Three.js, WordPress</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="solid gutter">
+    <section class="block" id="projekte">
+      <div class="label">Ausgewählte Arbeiten</div>
+      <h2 class="h2">Projekte, die <span class="acc">etwas bewegen.</span></h2>
+      <div class="projects">
+        <a class="proj" href="projekte/nlp-lernplattform.html"><span class="n">01</span><div><h3>NLP Lernplattform</h3><small>UX/UI Design · Konzept</small></div><p>Eine Lernumgebung, in der man sich vom ersten Klick an zurechtfindet.</p><span class="go">Case Study →</span></a>
+        <a class="proj" href="projekte/fashion-store.html"><span class="n">02</span><div><h3>Sustainable Fashion Store</h3><small>E-Commerce · UI Design</small></div><p>Ein ruhiger, mobiler Shop mit einem Checkout ohne Umwege.</p><span class="go">Case Study →</span></a>
+        <a class="proj" href="projekte/startup-landing.html"><span class="n">03</span><div><h3>Tech Startup Landing Page</h3><small>Webdesign · Umsetzung</small></div><p>Eine klare Geschichte statt Fachchinesisch, damit mehr Anfragen kommen.</p><span class="go">Case Study →</span></a>
+      </div>
+    </section>
+
+    <section class="block" id="prozess" style="padding-top:0">
+      <div class="label">So arbeite ich</div>
+      <h2 class="h2">Von der Idee zur <span class="acc">fertigen Website.</span></h2>
+      <ol class="steps">
+        <li><b>01</b><h3>Verstehen</h3><p>Ziele, Zielgruppe und was Ihre Seite heute noch nicht leistet.</p></li>
+        <li><b>02</b><h3>Konzept</h3><p>Struktur, Nutzerwege und Wireframes für jede Seite.</p></li>
+        <li><b>03</b><h3>Design</h3><p>Ein klickbarer Prototyp in Figma, bevor Code entsteht.</p></li>
+        <li><b>04</b><h3>Launch</h3><p>Responsiv gebaut, auf echten Geräten getestet, online gebracht.</p></li>
+      </ol>
+    </section>
+
+    <section class="block contact" id="kontakt" style="padding-top:0">
+      <div class="label">Kontakt</div>
+      <h2 class="h2">Lassen Sie uns etwas <span class="acc">bauen.</span></h2>
+      <a class="mail" href="mailto:mohamad95issa@gmail.com?subject=Projektanfrage">mohamad95issa@gmail.com</a>
+      <div class="btns">
+        <a class="btn solid" href="mailto:mohamad95issa@gmail.com?subject=Projektanfrage">E-Mail schreiben</a>
+        <button class="btn" type="button" id="copy">Adresse kopieren</button>
+        <a class="btn" href="https://linkedin.com/in/mohamad-issa-35660a3a6/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a class="btn" href="https://instagram.com/mudy_iss/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 Mohamad Issa</span>
+      <nav aria-label="Weitere Seiten">
+        <a href="website.html">Klassische Ansicht</a>
+        <a href="studio.html">3D-Studio</a>
+        <a href="making-of.html">Making-of</a>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </footer>
+  </div>
+</main>
+
+<script src="cine.js"></script>
 </body>
 </html>
