@@ -19,9 +19,9 @@
     wrap.className = 'site';
     wrap.style.width = PXW + 'px'; wrap.style.height = PXH + 'px';
     const f = document.createElement('iframe');
-    f.title = 'Website von Mohamad Issa, Abschnitt ' + hash.slice(1);
+    f.title = 'Mohamad Issa, Abschnitt ' + hash.slice(1);
     wrap.appendChild(f);
-    return {wrap, f, hash, url:'website.html?mi=' + encodeURIComponent(hash.slice(1)), loaded:false, active:false, op:-1};
+    return {wrap, f, hash, url:'index.html?mi=' + encodeURIComponent(hash.slice(1)), loaded:false, active:false, op:-1};
   }
   // iframes load only when you get close: faster start, lighter on phones
   function loadSite(s){

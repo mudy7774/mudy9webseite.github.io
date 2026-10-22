@@ -85,7 +85,7 @@ main{position:relative;z-index:10}
 @keyframes drip{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
 
 /* content after the scenes */
-.solid{position:relative;z-index:10;background:linear-gradient(rgba(5,5,8,0),var(--black) 140px)}
+.after{position:relative;z-index:10;background:linear-gradient(rgba(5,5,8,0),var(--black) 140px)}
 .block{max-width:1400px;margin:0 auto;padding-block:120px}
 .label{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .label::before{content:"";width:22px;height:1px;background:var(--cyan)}
@@ -146,3 +146,32 @@ footer a:hover{color:var(--fg)}
 }
 @media (max-width:520px){.steps{grid-template-columns:1fr}.sides{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.grain,.hint i{animation:none}}
+
+/* teaser for the 3D studio */
+.studio-card{position:relative;display:block;min-height:520px;border-radius:16px;overflow:hidden;border:1px solid var(--line);text-decoration:none;color:var(--fg);isolation:isolate}
+.studio-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transform:scale(1.02);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.studio-card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,5,8,.94) 0%,rgba(5,5,8,.75) 42%,rgba(5,5,8,.15) 100%)}
+.studio-card:hover img{transform:scale(1.07)}
+.studio-card:hover{border-color:rgba(69,220,240,.5)}
+.studio-txt{position:relative;max-width:560px;padding:56px 48px}
+.studio-txt .h2{margin-bottom:18px}
+.studio-txt p{color:#d9dcea;margin-bottom:28px;max-width:46ch}
+@media (max-width:860px){
+  .studio-card{min-height:0}
+  .studio-card img{object-position:62% 75%}
+  .studio-card::before{background:linear-gradient(180deg,rgba(5,5,8,.2) 0%,rgba(5,5,8,.92) 45%)}
+  .studio-txt{padding:200px 22px 28px}
+}
+
+/* ---------- screen mode inside the 3D studio (index.html?mi=…) ---------- */
+html.mi-solo .top,html.mi-solo #loader,html.mi-solo .rail,html.mi-solo .hint,html.mi-solo .grain{display:none!important}
+html.mi-solo main > .scene:not(.mi-on){display:none}
+html.mi-solo main > .scene.mi-on{height:100vh!important;height:100svh!important}
+html.mi-solo .after > :not(.mi-on){display:none}
+html.mi-solo.mi-flat #stage{display:none}
+html.mi-solo.mi-flat main > .scene{display:none}
+html.mi-solo.mi-flat .after{background:radial-gradient(70% 60% at 20% 0%,rgba(109,106,248,.16),transparent 60%),var(--black);min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+html.mi-solo .block.mi-on{padding-block:70px 40px;width:100%}
+html.mi-solo .reveal{opacity:1!important;transform:none!important}
+html.mi-solo .hud .l1,html.mi-solo .hud .l2{top:24px}
+html.mi-solo .hud .tl,html.mi-solo .hud .tr{top:18px}

@@ -10,6 +10,32 @@
   const scenes = [...document.querySelectorAll('.scene')];
   const reveals = [...document.querySelectorAll('.reveal')].map(el => ({el, at: parseFloat(el.dataset.in || '0'), scene: scenes.indexOf(el.closest('.scene'))}));
   const loader = document.getElementById('loader'), started = performance.now();
+
+  /* ---------- screen mode for the 3D studio ----------
+     index.html?mi=sc1 shows only that part of the page on a studio monitor.
+     Scenes play their scroll animation by themselves in a loop. */
+  const miParam = window.__miParam || (location.search.match(/[?&]mi=([^&]+)/) || [])[1];
+  const soloEl = miParam ? document.getElementById(decodeURIComponent(miParam)) : null;
+  const soloScene = soloEl ? scenes.indexOf(soloEl) : -1;
+  let soloActive = false;
+  if(soloEl){
+    document.documentElement.classList.add('mi-solo');
+    if(soloScene < 0) document.documentElement.classList.add('mi-flat');
+    soloEl.classList.add('mi-on');
+    document.querySelectorAll('a[href]').forEach(l => { const h = l.getAttribute('href') || ''; if(h[0] !== '#' && h.indexOf('mailto:') !== 0){ l.target = '_blank'; l.rel = 'noopener'; } });
+    addEventListener('message', e => { if(e.data && typeof e.data.miActive === 'boolean') soloActive = e.data.miActive; });
+    const fit = () => {
+      if(soloScene >= 0) return;
+      soloEl.style.zoom = ''; const h = soloEl.scrollHeight, z = Math.max(.8, Math.min(1, (innerHeight - 8) / h));
+      if(z < 1) soloEl.style.zoom = z;
+    };
+    addEventListener('resize', fit); addEventListener('load', fit); setTimeout(fit, 300);
+  }
+  function soloProgress(time){
+    const cycle = 8, u = reduce ? 1 : (time % cycle) / cycle, k = ease(Math.min(1, u / .75));
+    const range = [[0, .9], [.25, .92], [.25, .75]][soloScene], p = range[0] + (range[1] - range[0]) * k;
+    return [soloScene === 0 ? p : 1, soloScene === 1 ? p : soloScene > 1 ? 1 : 0, soloScene === 2 ? p : 0];
+  }
   let W = 0, H = 0, DPR = 1, mobile = false;
 
   /* ---------- helpers ---------- */
@@ -138,11 +164,11 @@
   let t0 = performance.now(), time = 0, faceAnchor = .68;
   function frame(now){
     const dt = Math.min(.05, (now - t0) / 1000); t0 = now; if(!reduce) time += dt;
-    const P = scenes.map(progressOf);
+    const P = soloScene >= 0 ? soloProgress(time) : scenes.map(progressOf);
     const p1 = P[0], p2 = P[1], p3 = P[2];
     const in2 = ease(clamp(p2 * 4)), in3 = ease(clamp(p3 * 4));
     const w1 = 1 - in2, w2 = in2 * (1 - in3), w3 = in3;
-    const past = clamp(-scenes[2].getBoundingClientRect().bottom / innerHeight + 1);   // after the last scene
+    const past = soloScene >= 0 ? 0 : clamp(-scenes[2].getBoundingClientRect().bottom / innerHeight + 1);   // after the last scene
 
     // DOM: reveal text, HUD
     reveals.forEach(r => {
@@ -296,7 +322,8 @@
     if(past > 0){ ctx.fillStyle = `rgba(5,5,8,${past * .85})`; ctx.fillRect(0, 0, W, H); }
 
     if(performance.now() - started > 600 && !loader.classList.contains('done')) setTimeout(() => loader.classList.add('done'), Math.max(0, 900 - (performance.now() - started)));
-    requestAnimationFrame(frame);
+    // monitors you are not looking at in the studio update slowly to save power
+    if(soloEl && !soloActive) setTimeout(() => requestAnimationFrame(frame), 250); else requestAnimationFrame(frame);
   }
 
   img.onload = () => { photo = feather(img, img.naturalWidth, img.naturalHeight); const wr = makeWire(); wire = wr ? feather(wr, wr.width, wr.height) : null; ready = true; };
@@ -310,6 +337,7 @@
   const fmt = new Intl.DateTimeFormat('de-DE', {hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin'});
   const tick = () => clock.textContent = fmt.format(new Date()); tick(); setInterval(tick, 20000);
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    if(soloEl){ e.preventDefault(); try { parent.postMessage({miNav: a.getAttribute('href')}, '*'); } catch(_){} return; }
     const el = document.querySelector(a.getAttribute('href')); if(!el) return;
     e.preventDefault(); el.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'});
   }));

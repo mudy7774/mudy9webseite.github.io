@@ -1,16 +1,15 @@
-MI STUDIO – Mohamad Issa
-========================
+MOHAMAD ISSA – Website
+======================
 
-index.html          3D-Studio (Startseite)
-website.html        deine klassische Website (läuft auch auf den Bildschirmen im Studio)
-projekte/           drei Case Studies
-making-of.html      wie das Studio gebaut ist
-impressum.html      Vorlage – gelbe Stellen ausfüllen!
-datenschutz.html    Vorlage – gelbe Stellen ausfüllen (vor allem Hosting-Anbieter)!
+index.html          Startseite (Kino-Stil): cine.css + cine.js
+studio.html         3D-Studio: studio.css + studio.js + lib/three
+                    Die Bildschirme im Studio zeigen Teile von index.html.
+projekte/           drei Case Studies (verlinkt bei „Projekte")
+impressum.html      Pflicht in Deutschland – gelbe Stellen ausfüllen!
+datenschutz.html    Pflicht in Deutschland – gelbe Stellen ausfüllen!
+pages.css           Design für Case Studies, Impressum, Datenschutz
+fonts/              Schriften (lokal, DSGVO-freundlich)
+img/                Bilder (siehe img/BILDER-HIER-ABLEGEN.txt)
 
-Gelb markierte Stellen (✏️) sind Platzhalter. Ersetze sie mit deinen echten Infos,
-bevor du die Seite veröffentlichst. Erfinde keine Zahlen oder Kundenstimmen.
-
-Alles läuft ohne externe Server: Schriften (fonts/), Icons (fa/) und Three.js (lib/)
-liegen im Projekt. Einfach den ganzen Ordner auf deinen Hoster hochladen.
-Lokal testen: VS Code + "Live Server" (nicht per Doppelklick öffnen).
+Gelb markierte Stellen (✏️) sind Platzhalter: vor dem Veröffentlichen ersetzen.
+Lokal testen: VS Code + "Live Server". Auf GitHub: den ganzen Ordnerinhalt hochladen.

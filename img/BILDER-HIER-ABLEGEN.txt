@@ -1,17 +1,14 @@
-Lege deine Bilder in diesen Ordner, genau mit diesen Namen.
-Fehlt ein Bild, erscheint automatisch ein Platzhalter.
+Bilder in diesem Ordner (genau diese Namen). Fehlt ein Bild, erscheint ein Platzhalter.
 
-Deine Website
-  Herobild.jpg, straße line.jpeg, straße.jpeg
-  preview.jpg            -> Vorschaubild, wenn jemand deinen Link teilt (1200 x 630)
+  portrait.jpg         dein Foto auf der Startseite (schon drin)
+  studio-preview.jpg   Vorschau der 3D-Studio-Karte (schon drin)
+  preview.jpg          Vorschaubild beim Teilen des Links (1200 x 630)
 
-Fotowand im Studio
-  foto1.jpg, foto2.jpg, foto3.jpg
+3D-Studio
+  foto1.jpg, foto2.jpg, foto3.jpg       Fotowand am Eingang
+  new-york.jpg, berlin.jpg, paris.jpg   Fensterwände (sonst gemalte Skylines)
 
-Fensterwände mit den Städten
-  new-york.jpg, berlin.jpg, paris.jpg
-
-Case Studies (Ordner img/projekte/)
+Case Studies (img/projekte/)
   nlp-lernplattform-cover.jpg, nlp-wireframes.jpg, nlp-dashboard.jpg, nlp-onboarding.jpg, nlp-mobile.jpg
   fashion-store-cover.jpg, fashion-moodboard.jpg, fashion-mobile.jpg, fashion-checkout.jpg, fashion-components.jpg
   startup-landing-cover.jpg, startup-vorher.jpg, startup-nachher.jpg, startup-mobile.jpg, startup-details.jpg
