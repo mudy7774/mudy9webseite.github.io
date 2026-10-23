@@ -34,7 +34,7 @@
   function soloProgress(time){
     const cycle = 8, u = reduce ? 1 : (time % cycle) / cycle, k = ease(Math.min(1, u / .75));
     const range = [[0, .9], [.25, .92], [.25, .75]][soloScene], p = range[0] + (range[1] - range[0]) * k;
-    return [soloScene === 0 ? p : 1, soloScene === 1 ? p : soloScene > 1 ? 1 : 0, soloScene === 2 ? p : 0];
+    return scenes.map((_, i) => i < soloScene ? 1 : i === soloScene ? p : 0);
   }
   let W = 0, H = 0, DPR = 1, mobile = false;
 
@@ -46,10 +46,12 @@
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
   function resize(){
-    DPR = Math.min(devicePixelRatio || 1, 2);
     W = innerWidth; H = innerHeight; mobile = W < 860;
+    DPR = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);   // phones: fewer pixels, smoother scrolling
     cvs.width = Math.round(W * DPR); cvs.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    smk.width = Math.ceil(W / 4); smk.height = Math.ceil(H / 4);   // smoke is soft anyway: draw it at quarter size
+    overlays = {};
     buildLogoTargets();
   }
 
@@ -134,6 +136,21 @@
   }
 
   /* ---------- atmosphere: smoke and embers ---------- */
+  const smk = document.createElement('canvas'), sctx = smk.getContext('2d');
+  // framing + vignette never change while scrolling: draw them once (half size) and reuse
+  let overlays = {};
+  function overlay(side){
+    if(overlays[side]) return overlays[side];
+    const c = document.createElement('canvas'), w = c.width = Math.ceil(W / 2), h = c.height = Math.ceil(H / 2), g = c.getContext('2d');
+    let gr;
+    if(!mobile){ gr = side ? g.createLinearGradient(w, 0, w * .4, 0) : g.createLinearGradient(0, 0, w * .6, 0); gr.addColorStop(0, 'rgba(5,5,8,.9)'); gr.addColorStop(1, 'rgba(5,5,8,0)'); }
+    else { gr = g.createLinearGradient(0, h * .45, 0, h); gr.addColorStop(0, 'rgba(5,5,8,0)'); gr.addColorStop(1, 'rgba(5,5,8,.95)'); }
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    const v = g.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .35, w / 2, h / 2, Math.max(w, h) * .75);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.6)');
+    g.fillStyle = v; g.fillRect(0, 0, w, h);
+    return overlays[side] = c;
+  }
   const smoke = Array.from({length: 7}, (_, i) => ({x: rnd(), y: .35 + rnd() * .6, r: .25 + rnd() * .3, v: (rnd() - .5) * .012, a: .05 + rnd() * .05}));
   const embers = Array.from({length: 70}, () => ({x: rnd(), y: rnd(), v: .02 + rnd() * .05, s: .6 + rnd() * 1.6, c: rnd() < .7 ? '69,220,240' : '255,190,120'}));
 
@@ -161,30 +178,39 @@
   const chap = document.getElementById('chap'), railBar = document.getElementById('railBar'), hint = document.getElementById('hint');
 
   /* ---------- render ---------- */
-  let t0 = performance.now(), time = 0, faceAnchor = .68;
+  let t0 = performance.now(), time = 0, faceAnchor = .68, idle = false;
+  const hud = {};
   function frame(now){
     const dt = Math.min(.05, (now - t0) / 1000); t0 = now; if(!reduce) time += dt;
     const P = soloScene >= 0 ? soloProgress(time) : scenes.map(progressOf);
     const p1 = P[0], p2 = P[1], p3 = P[2];
     const in2 = ease(clamp(p2 * 4)), in3 = ease(clamp(p3 * 4));
     const w1 = 1 - in2, w2 = in2 * (1 - in3), w3 = in3;
-    const past = soloScene >= 0 ? 0 : clamp(-scenes[2].getBoundingClientRect().bottom / innerHeight + 1);   // after the last scene
+    const past = soloScene >= 0 ? 0 : clamp(-scenes[scenes.length - 1].getBoundingClientRect().bottom / innerHeight + 1);   // after the last scene
 
-    // DOM: reveal text, HUD
+    // DOM: reveal text, HUD (only touch the page when a value really changes)
     reveals.forEach(r => {
       const p = P[r.scene];
       let o = r.at <= 0 ? 1 : clamp((p - r.at) / .15);
       o *= 1 - clamp((p - .9) / .1);
-      r.el.style.setProperty('--o', o.toFixed(3));
+      const v = o.toFixed(2);
+      if(v !== r.last){ r.last = v; r.el.style.setProperty('--o', v); }
     });
     const active = w3 > .5 ? 2 : w2 > .5 ? 1 : 0;
-    chap.textContent = '0' + (active + 1);
-    const docP = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
-    railBar.style.height = (docP * 100).toFixed(1) + '%';
-    if(hint) hint.style.opacity = scrollY > 40 ? 0 : 1;
+    if(active !== hud.chap){ hud.chap = active; chap.textContent = '0' + (active + 1); }
+    const docP = (scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight) * 100).toFixed(1) + '%';
+    if(docP !== hud.rail){ hud.rail = docP; railBar.style.height = docP; }
+    const hintO = scrollY > 40 ? '0' : '1';
+    if(hint && hintO !== hud.hint){ hud.hint = hintO; hint.style.opacity = hintO; }
+    const isPast = past > .6;
+    if(isPast !== hud.past){ hud.past = isPast; document.documentElement.classList.toggle('past', isPast); }
 
     // stage
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    if(!hud.loaderSet && performance.now() - started > 600){ hud.loaderSet = true; setTimeout(() => loader.classList.add('done'), Math.max(0, 900 - (performance.now() - started))); }
+    // below the scenes the stage is fully covered: draw nothing, save battery
+    if(past >= .999){ if(!idle){ cvs.style.visibility = 'hidden'; idle = true; } requestAnimationFrame(frame); return; }
+    if(idle){ cvs.style.visibility = ''; idle = false; }
     ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, W, H);
     if(!ready){ requestAnimationFrame(frame); return; }
 
@@ -194,9 +220,11 @@
 
     // photo
     const photoAlpha = w1 * lerp(.55, 1, ease(clamp(p1 * 1.6))) + w2 * .28 + w3;
-    ctx.globalAlpha = clamp(photoAlpha);
-    ctx.drawImage(photo, R.x, R.y, R.w, R.h);
-    ctx.globalAlpha = 1;
+    if(photoAlpha > .005){
+      ctx.globalAlpha = clamp(photoAlpha);
+      ctx.drawImage(photo, R.x, R.y, R.w, R.h);
+      ctx.globalAlpha = 1;
+    }
     // scene 1: darkness lifts, light sweeps over the face
     const dark = w1 * .5 * (1 - easeOut(clamp(p1 * 1.3))) + w2 * .35;
     if(dark > 0){ ctx.fillStyle = `rgba(5,5,8,${dark})`; ctx.fillRect(0, 0, W, H); }
@@ -215,12 +243,15 @@
     // smoke and embers (all scenes, a little less in scene 3)
     ctx.globalCompositeOperation = 'screen';
     const atm = 1 - w3 * .6;
+    const sw = smk.width, sh = smk.height;
+    sctx.globalCompositeOperation = 'source-over'; sctx.clearRect(0, 0, sw, sh); sctx.globalCompositeOperation = 'lighter';
     smoke.forEach(s => {
       const x = ((s.x + time * s.v) % 1.4 + 1.4) % 1.4 - .2;
-      const g = ctx.createRadialGradient(x * W, s.y * H, 0, x * W, s.y * H, s.r * Math.max(W, H));
+      const g = sctx.createRadialGradient(x * sw, s.y * sh, 0, x * sw, s.y * sh, s.r * Math.max(sw, sh));
       g.addColorStop(0, `rgba(150,160,190,${s.a * atm})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      sctx.fillStyle = g; sctx.fillRect(0, 0, sw, sh);
     });
+    ctx.drawImage(smk, 0, 0, W, H);
     embers.forEach(e => {
       const y = ((e.y - time * e.v) % 1 + 1) % 1, x = e.x + Math.sin(time * .7 + e.y * 9) * .01;
       ctx.fillStyle = `rgba(${e.c},${(.25 + .6 * Math.sin(y * Math.PI)) * atm})`;
@@ -307,21 +338,9 @@
 
     // framing: darker on the text side, vignette, fade out after the scenes
     ctx.globalCompositeOperation = 'source-over';
-    if(!mobile){
-      const side = w3 > .5 ? 1 : 0;
-      const g = side ? ctx.createLinearGradient(W, 0, W * .4, 0) : ctx.createLinearGradient(0, 0, W * .6, 0);
-      g.addColorStop(0, 'rgba(5,5,8,.9)'); g.addColorStop(1, 'rgba(5,5,8,0)');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    } else {
-      const g = ctx.createLinearGradient(0, H * .45, 0, H); g.addColorStop(0, 'rgba(5,5,8,0)'); g.addColorStop(1, 'rgba(5,5,8,.95)');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    }
-    const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75);
-    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.6)');
-    ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(overlay(!mobile && w3 > .5 ? 1 : 0), 0, 0, W, H);
     if(past > 0){ ctx.fillStyle = `rgba(5,5,8,${past * .85})`; ctx.fillRect(0, 0, W, H); }
 
-    if(performance.now() - started > 600 && !loader.classList.contains('done')) setTimeout(() => loader.classList.add('done'), Math.max(0, 900 - (performance.now() - started)));
     // monitors you are not looking at in the studio update slowly to save power
     if(soloEl && !soloActive) setTimeout(() => requestAnimationFrame(frame), 250); else requestAnimationFrame(frame);
   }
@@ -329,7 +348,9 @@
   img.onload = () => { photo = feather(img, img.naturalWidth, img.naturalHeight); const wr = makeWire(); wire = wr ? feather(wr, wr.width, wr.height) : null; ready = true; };
   img.onerror = () => { ready = false; loader.classList.add('done'); };
   setTimeout(() => loader.classList.add('done'), 6000);
-  resize(); addEventListener('resize', resize);
+  resize();
+  // phones: the address bar slides in and out while scrolling; do not rebuild the stage for that
+  addEventListener('resize', () => { if(mobile && innerWidth === W && Math.abs(innerHeight - H) < 160) return; resize(); });
   requestAnimationFrame(frame);
 
   /* ---------- small things ---------- */

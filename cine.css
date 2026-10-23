@@ -144,6 +144,8 @@ footer a:hover{color:var(--fg)}
   .steps{grid-template-columns:1fr 1fr}
   .block{padding-block:84px}
 }
+@media (max-width:860px){html.past .hud .lab,html.past .hud .c{opacity:0}.grain{animation:none}html.past .grain{display:none}}
+.hud .lab,.hud .c{transition:opacity .4s}
 @media (max-width:520px){.steps{grid-template-columns:1fr}.sides{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.grain,.hint i{animation:none}}
 

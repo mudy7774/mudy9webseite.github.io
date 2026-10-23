@@ -100,9 +100,12 @@
   if(!window.THREE){ flatFallback(); return; }
   const canvas = document.getElementById('gl');
   let renderer;
-  try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, powerPreference:'high-performance'}); } catch(e){ flatFallback(); return; }
   const low = isSmall();
-  renderer.setPixelRatio(Math.min(devicePixelRatio, low ? 1.5 : 2));
+  // phones: no MSAA (the bloom pass renders off-screen anyway) and fewer pixels; text on the monitors stays sharp because it is real HTML
+  try { renderer = new THREE.WebGLRenderer({canvas, antialias:!low, powerPreference:'high-performance'}); } catch(e){ flatFallback(); return; }
+  const PR_MAX = Math.min(devicePixelRatio, low ? 1.25 : 2);
+  let PR = PR_MAX;
+  renderer.setPixelRatio(PR);
   renderer.setSize(innerWidth, innerHeight);
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.setClearColor(0x06070f);
@@ -839,6 +842,21 @@
   const camFwd = new THREE.Vector3(), toScr = new THREE.Vector3();
 
   let composer = null, bloom = null;
+  // automatic quality: if the device cannot hold a smooth frame rate, render fewer pixels (and more again when it can)
+  const perf = {n:0, t:0, lastDrop:-99};
+  function setPR(v){
+    if(Math.abs(v - PR) < .01) return; PR = v;
+    renderer.setPixelRatio(PR);
+    if(composer){ if(composer.setPixelRatio) composer.setPixelRatio(PR); composer.setSize(innerWidth, innerHeight); }
+  }
+  function adaptQuality(dt){
+    if(!ldDone || document.hidden) return;
+    perf.n++; perf.t += dt;
+    if(perf.t < 1.5) return;
+    const fps = perf.n / perf.t; perf.n = 0; perf.t = 0;
+    if(fps < 40 && PR > .75){ setPR(Math.max(.75, PR - .25)); perf.lastDrop = time; }
+    else if(fps > 57 && PR < PR_MAX && time - perf.lastDrop > 8) setPR(Math.min(PR_MAX, PR + .25));
+  }
   if(THREE.EffectComposer && THREE.UnrealBloomPass){
     try {
       composer = new THREE.EffectComposer(renderer);
@@ -990,7 +1008,9 @@
   });
 
   function frame(now){
-    const dt = Math.min(.05, (now - t0)/1000); t0 = now; if(!reduce) time += dt;
+    const rawDt = (now - t0)/1000;
+    const dt = Math.min(.05, rawDt); t0 = now; if(!reduce) time += dt;
+    if(rawDt < .5) adaptQuality(rawDt);
     const target = stationProgress();
     cur += (target - cur) * (reduce ? 1 : 1 - Math.pow(touring ? .003 : .09, dt));   // ruhig beim Scrollen, schnell während der Tour
     smx += (mx - smx) * .05; smy += (my - smy) * .05;
