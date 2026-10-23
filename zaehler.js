@@ -1,7 +1,7 @@
 /* Besucherzähler ohne Cookies (GoatCounter, kostenlos)
    1. Auf https://www.goatcounter.com ein Konto anlegen, z. B. mit dem Namen "mohamadissa".
    2. Den Namen hier eintragen:                                                         */
-var GOATCOUNTER_NAME = '';
+var GOATCOUNTER_NAME = 'mudy99';
 /* Fertig. Die Zahlen siehst du dann auf https://DEINNAME.goatcounter.com
    Bildschirme im 3D-Studio und dein eigener Rechner (localhost) werden nicht mitgezählt. */
 (function(){
@@ -13,3 +13,4 @@ var GOATCOUNTER_NAME = '';
   s.setAttribute('data-goatcounter', 'https://' + GOATCOUNTER_NAME + '.goatcounter.com/count');
   document.head.appendChild(s);
 })();
+ 
