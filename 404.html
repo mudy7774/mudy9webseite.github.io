@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- GitHub zeigt diese Seite bei jedem falschen Link. "base" sorgt dafür, dass Bilder und Links auch in Unterordnern stimmen.
+         Ändert sich der Name deines Repos, hier anpassen. -->
+    <base href="/mudy9webseite.github.io/">
+    <meta name="robots" content="noindex">
+    <title>Signal verloren | Mohamad Issa</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <style>
+      :root{--black:#050508;--fg:#f2f3fa;--muted:#8d91a6;--line:rgba(255,255,255,.12);--cyan:#45dcf0;--indigo:#6d6af8;
+            --display:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{height:100%}
+      body{background:var(--black);color:var(--fg);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased}
+      #noise{position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:.1}
+      .glow{position:fixed;inset:0;background:radial-gradient(60% 50% at 70% 40%,rgba(109,106,248,.18),transparent 70%),radial-gradient(40% 40% at 20% 80%,rgba(69,220,240,.08),transparent 70%)}
+      .scan{position:fixed;left:0;right:0;height:120px;top:-120px;background:linear-gradient(rgba(69,220,240,0),rgba(69,220,240,.07),rgba(69,220,240,0));animation:scan 4.5s linear infinite}
+      @keyframes scan{to{top:100%}}
+      .hud span{position:fixed;width:18px;height:18px;border:1px solid var(--cyan);opacity:.6}
+      .hud .tl{top:18px;left:18px;border-right:0;border-bottom:0}.hud .tr{top:18px;right:18px;border-left:0;border-bottom:0}
+      .hud .bl{bottom:18px;left:18px;border-right:0;border-top:0}.hud .br{bottom:18px;right:18px;border-left:0;border-top:0}
+      .lab{position:fixed;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+      .lab b{color:var(--fg);font-weight:500}
+      .l1{top:26px;left:48px;display:flex;align-items:center;gap:8px}.l2{bottom:26px;right:48px}
+      .dot{width:7px;height:7px;border-radius:50%;background:#ff5d6c;box-shadow:0 0 10px #ff5d6c;animation:blink 1s steps(2) infinite}
+      @keyframes blink{50%{opacity:.2}}
+      main{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(22px,7vw,110px);max-width:1200px}
+      .logo{width:58px;margin-bottom:34px;filter:drop-shadow(0 0 14px rgba(109,106,248,.6));animation:jit 3s infinite}
+      @keyframes jit{0%,90%,100%{transform:none;opacity:1}92%{transform:translate(3px,-1px);opacity:.6}94%{transform:translate(-4px,1px)}96%{transform:none;opacity:.8}}
+      .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:10px;margin-bottom:16px}
+      .kick::before{content:"";width:8px;height:8px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+      h1{position:relative;font-family:var(--display);font-weight:700;font-size:clamp(5.5rem,22vw,15rem);line-height:.82;letter-spacing:-.06em}
+      h1 span{position:relative;display:inline-block;z-index:0}
+      h1 span::before,h1 span::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none;z-index:-1}
+      h1 span::before{color:var(--cyan);clip-path:inset(0 0 62% 0);transform:translate(-5px,0);opacity:.75;animation:g1 2.6s infinite steps(1)}
+      h1 span::after{color:var(--indigo);clip-path:inset(58% 0 0 0);transform:translate(5px,0);opacity:.75;animation:g2 2.2s infinite steps(1)}
+      @keyframes g1{0%{clip-path:inset(0 0 62% 0)}30%{clip-path:inset(20% 0 50% 0);transform:translate(-7px,0)}55%{clip-path:inset(70% 0 5% 0);transform:translate(-2px,0)}80%{clip-path:inset(40% 0 40% 0);transform:translate(-5px,0)}}
+      @keyframes g2{0%{clip-path:inset(58% 0 0 0)}25%{clip-path:inset(10% 0 75% 0);transform:translate(6px,0)}60%{clip-path:inset(45% 0 30% 0);transform:translate(2px,0)}85%{clip-path:inset(80% 0 2% 0);transform:translate(5px,0)}}
+      h2{font-family:var(--display);font-size:clamp(1.6rem,4vw,2.6rem);letter-spacing:-.03em;margin-top:22px}
+      h2 em{font-style:normal;color:var(--cyan);text-shadow:0 0 30px rgba(69,220,240,.35)}
+      p{color:#d9dcea;max-width:46ch;margin-top:14px;font-size:1.02rem;line-height:1.6}
+      .path{font-family:var(--mono);font-size:.78rem;color:var(--muted);margin-top:18px;word-break:break-all}
+      .path b{color:#ff8a95;font-weight:500}
+      .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+      .btn{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--fg);border:1px solid var(--line);padding:15px 22px;border-radius:6px;transition:border-color .25s,background .25s,transform .25s}
+      .btn:hover,.btn:focus-visible{border-color:var(--cyan);transform:translateY(-2px)}
+      .btn.solid{background:var(--fg);color:var(--black);border-color:var(--fg)}
+      .btn.solid:hover{background:var(--cyan);border-color:var(--cyan)}
+      .btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+      @media (max-width:600px){.l2{display:none}main{justify-content:flex-end;padding-bottom:70px}}
+      @media (prefers-reduced-motion:reduce){.scan,.logo,.dot,h1 span::before,h1 span::after{animation:none}}
+    </style>
+</head>
+<body>
+<canvas id="noise" width="160" height="90" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+<div class="hud" aria-hidden="true"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+<div class="lab l1" aria-hidden="true"><span class="dot"></span>Signal · <b>Verloren</b></div>
+<div class="lab l2" aria-hidden="true">MI-01 · Fehler <b>404</b></div>
+
+<main>
+  <svg class="logo" viewBox="0 0 64 52" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#fff"/><rect x="45" y="20" width="6" height="20" fill="#fff"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></svg>
+  <div class="kick">Fehler 404 · Kein Signal</div>
+  <h1><span data-t="404">404</span></h1>
+  <h2>Diese Seite hat <em>das Signal verloren.</em></h2>
+  <p>Den Link gibt es nicht, oder er hat sich irgendwo im Studio verlaufen. Kein Problem: Hier geht es zurück.</p>
+  <div class="path" id="path"></div>
+  <div class="btns">
+    <a class="btn solid" href="./">← Zur Startseite</a>
+    <a class="btn" href="studio.html">Ins 3D-Studio</a>
+    <a class="btn" href="./#kontakt">Kontakt</a>
+  </div>
+</main>
+
+<script>
+(function(){
+  // which address did the visitor try?
+  var p = document.getElementById('path');
+  try { p.innerHTML = 'Gesucht: <b></b>'; p.querySelector('b').textContent = decodeURIComponent(location.pathname); } catch(e){ p.textContent = ''; }
+  // TV static, drawn small and scaled up
+  var c = document.getElementById('noise'), g = c.getContext('2d'), img = g.createImageData(160, 90), d = img.data;
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches, last = 0;
+  function draw(t){
+    if(t - last > 70){
+      last = t;
+      for(var i = 0; i < d.length; i += 4){ var v = Math.random() * 255 | 0; d[i] = v * .8; d[i+1] = v * .85; d[i+2] = v; d[i+3] = 255; }
+      g.putImageData(img, 0, 0);
+    }
+    if(!still) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+<script src="zaehler.js" defer></script>
+</body>
+</html>

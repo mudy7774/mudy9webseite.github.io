@@ -35,6 +35,22 @@
     if(i > 0) goStation(i);
   });
 
+
+  /* ---------- a hello for developers who open the console (F12) ---------- */
+  function helloDev(){
+    try {
+      const big = 'font:700 22px "Space Grotesk",system-ui,sans-serif;color:#fff;background:linear-gradient(90deg,#6d6af8,#45dcf0);padding:10px 16px;border-radius:8px';
+      const txt = 'font:14px Inter,system-ui,sans-serif;color:#d9dcea;line-height:1.6';
+      const acc = 'font:600 14px Inter,system-ui,sans-serif;color:#45dcf0';
+      console.log('%cMI · Mohamad Issa', big);
+      console.log('%cHi! Du schaust dir den Code an? Das gefällt mir. 👀', txt);
+      console.log('%cGebaut mit Canvas 2D und Three.js, ganz ohne Framework.', txt);
+      console.log('%cLass uns reden: %cmohamad95issa@gmail.com', txt, acc);
+      console.log('%cLinkedIn: %chttps://linkedin.com/in/mohamad-issa-35660a3a6/', txt, acc);
+    } catch(e){}
+  }
+  helloDev();
+
   /* ---------- stations ---------- */
   const stops = [...document.querySelectorAll('.stop')];
   const N = stops.length;
