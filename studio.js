@@ -979,107 +979,179 @@
   });
 
 
-  /* ---------- entrance: a glass sliding door with the welcome text ----------
-     The studio starts outside. Scroll, click or press a key: the doors slide open and the camera walks in. */
-  const DOOR_W = 3.2, DOOR_H = 3.0, VEST_W = 7.4, VEST_H = 3.7, VEST_L = 11;
+  /* ---------- entrance: a corporate lobby with a clear glass sliding door ----------
+     The studio starts in the lobby. Scroll, click or press a key: the sensor turns green,
+     the glass doors slide open and the camera walks in. */
+  const DOOR_W = 3.2, DOOR_H = 3.0, VEST_W = 9, VEST_H = 3.8, VEST_L = 11, FRONT_W = 6.4;
   const skipDoor = reduce || /^#s[1-9]/.test(location.hash);
   let doorState = skipDoor ? 'open' : 'closed', doorT = 0, doorThen = null;
+  let slideDoors = () => {};
   {
-    const wallMat = new THREE.MeshStandardMaterial({color:0x05060c, roughness:.9, metalness:.1});
-    const zc = Z0 + VEST_L/2;
-    // vestibule: floor, ceiling, side walls
-    const vf = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshStandardMaterial({color:0x04050a, roughness:.4, metalness:.4}));
-    vf.rotation.x = -Math.PI/2; vf.position.set(0, .001, zc); scene.add(vf);
-    const vc = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshBasicMaterial({color:0x040409}));
-    vc.rotation.x = Math.PI/2; vc.position.set(0, VEST_H, zc); scene.add(vc);
-    [-1, 1].forEach(side => {
-      const w = new THREE.Mesh(new THREE.PlaneGeometry(VEST_L, VEST_H), wallMat);
-      w.rotation.y = -side * Math.PI/2; w.position.set(side * VEST_W/2, VEST_H/2, zc); scene.add(w);
-      // thin light lines along the walls and the ceiling lead to the door
-      const ln = new THREE.Mesh(new THREE.BoxGeometry(.03, .03, VEST_L), new THREE.MeshBasicMaterial({color: side < 0 ? 0x6d6af8 : 0x45dcf0}));
-      ln.position.set(side * (VEST_W/2 - .02), .45, zc); scene.add(ln);
+    const zc = Z0 + VEST_L/2, tex = (c, rep) => { const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; if(rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return t; };
+    const cv = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return [c, c.getContext('2d')]; };
+
+    // polished dark stone floor with large tiles
+    {
+      const [c, g] = cv(512, 512);
+      g.fillStyle = '#16171f'; g.fillRect(0, 0, 512, 512);
+      for(let i = 0; i < 26; i++){ g.strokeStyle = `rgba(${150 + rnd()*60},${150 + rnd()*60},${170 + rnd()*60},${.03 + rnd()*.05})`; g.lineWidth = .6 + rnd()*1.6;
+        g.beginPath(); let x = rnd()*512, y = rnd()*512; g.moveTo(x, y); for(let k = 0; k < 6; k++){ x += (rnd() - .5)*160; y += (rnd() - .5)*160; g.lineTo(x, y); } g.stroke(); }
+      g.strokeStyle = 'rgba(0,0,0,.65)'; g.lineWidth = 3; g.strokeRect(0, 0, 512, 512);
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshStandardMaterial({map: tex(c, [VEST_W/1.5, VEST_L/1.5]), roughness:.22, metalness:.25}));
+      m.rotation.x = -Math.PI/2; m.position.set(0, .001, zc); scene.add(m);
+    }
+    // ceiling with recessed downlights and soft light pools on the floor
+    const ceilM = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshStandardMaterial({color:0x0b0b10, roughness:1}));
+    ceilM.rotation.x = Math.PI/2; ceilM.position.set(0, VEST_H, zc); scene.add(ceilM);
+    {
+      const [c, g] = cv(128, 128), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, 'rgba(255,236,205,.28)'); gr.addColorStop(.5, 'rgba(255,226,190,.07)'); gr.addColorStop(1, 'rgba(255,220,180,0)');
+      g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+      const poolMat = new THREE.MeshBasicMaterial({map: tex(c), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending});
+      const dlMat = new THREE.MeshBasicMaterial({color:0xfff3e0});
+      [-2.4, 2.4].forEach(x => { for(let z = Z0 + 1.6; z < Z0 + VEST_L - .5; z += 2.6){
+        const d = new THREE.Mesh(new THREE.CircleGeometry(.09, 20), dlMat); d.rotation.x = Math.PI/2; d.position.set(x, VEST_H - .005, z); scene.add(d);
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.8), poolMat); p.rotation.x = -Math.PI/2; p.position.set(x, .006, z); scene.add(p);
+      } });
+    }
+    // left wall: warm wooden slats; right wall: dark stone with the backlit company logo
+    {
+      const wallM = new THREE.MeshStandardMaterial({color:0x101118, roughness:.85});
+      [-1, 1].forEach(side => { const w = new THREE.Mesh(new THREE.PlaneGeometry(VEST_L, VEST_H), wallM); w.rotation.y = -side*Math.PI/2; w.position.set(side*VEST_W/2, VEST_H/2, zc); scene.add(w); });
+      const n = Math.floor((VEST_L - 1) / .16), slat = new THREE.InstancedMesh(new THREE.BoxGeometry(.06, VEST_H - .02, .09), new THREE.MeshStandardMaterial({color:0x6b4428, roughness:.6}), n);
+      const o = new THREE.Object3D();
+      for(let i = 0; i < n; i++){ o.position.set(-VEST_W/2 + .05, VEST_H/2, Z0 + .6 + i*.16); o.updateMatrix(); slat.setMatrixAt(i, o.matrix); }
+      scene.add(slat);
+      const warm = new THREE.Mesh(new THREE.BoxGeometry(.03, .02, VEST_L - 1), new THREE.MeshBasicMaterial({color:0xffc58a}));
+      warm.position.set(-VEST_W/2 + .12, .03, zc); scene.add(warm);
+      const wl = new THREE.PointLight(0xffb070, .6, 6, 2); wl.position.set(-VEST_W/2 + .6, .4, Z0 + 4); scene.add(wl);
+      // logo wall
+      const [c, g] = cv(1024, 640);
+      g.fillStyle = '#0d0e15'; g.fillRect(0, 0, 1024, 640);
+      g.save(); g.translate(512 - 130, 120); g.scale(260/64, 260/64);
+      g.shadowColor = 'rgba(109,106,248,1)'; g.shadowBlur = 10;
+      g.lineWidth = 3; g.strokeStyle = '#8f8cff'; g.beginPath(); if(g.roundRect) g.roundRect(1.5, 1.5, 61, 49, 10); else g.rect(1.5, 1.5, 61, 49); g.stroke();
+      g.fillStyle = '#ffffff'; g.fill(new Path2D('M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z')); g.fillRect(45, 20, 6, 20);
+      g.fillStyle = '#45dcf0'; g.fillRect(45, 12, 6, 5.5); g.restore();
+      g.textAlign = 'center'; g.fillStyle = '#eef0fa'; g.font = '600 64px "Space Grotesk", system-ui, sans-serif';
+      g.fillText('MI Studio', 512, 480);
+      g.fillStyle = 'rgba(205,210,235,.7)'; g.font = '500 24px "JetBrains Mono", ui-monospace, monospace';
+      g.fillText('DESIGN  ·  CODE  ·  UX', 512, 535);
+      const logoTex = tex(c);
+      const lw = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.0), new THREE.MeshBasicMaterial({map: logoTex}));
+      lw.rotation.y = -Math.PI/2; lw.position.set(VEST_W/2 - .02, 1.95, Z0 + 4.6); scene.add(lw);
+      const halo = new THREE.PointLight(0x6d6af8, .9, 4, 2); halo.position.set(VEST_W/2 - .8, 2.1, Z0 + 4.6); scene.add(halo);
+      var redrawLogo = () => { logoTex.needsUpdate = true; };
+    }
+    // front: dark wall, top rail with sensor, sign, glass storefront
+    const front = new THREE.MeshStandardMaterial({color:0x0c0d14, roughness:.7});
+    const sideW = (VEST_W - FRONT_W)/2, top = VEST_H - DOOR_H;
+    [[-(FRONT_W/2 + sideW/2), sideW, VEST_H, VEST_H/2], [FRONT_W/2 + sideW/2, sideW, VEST_H, VEST_H/2], [0, FRONT_W, top, DOOR_H + top/2]].forEach(([x, w, h, y]) => {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .3), front); b.position.set(x, y, Z0); scene.add(b);
     });
-    // front wall around the doorway
-    const side = (VEST_W - DOOR_W)/2, lint = VEST_H - DOOR_H;
-    [[-(DOOR_W/2 + side/2), side, VEST_H, VEST_H/2], [DOOR_W/2 + side/2, side, VEST_H, VEST_H/2], [0, DOOR_W, lint, DOOR_H + lint/2]].forEach(([x, w, h, y]) => {
-      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .24), wallMat); b.position.set(x, y, Z0); scene.add(b);
-    });
-    // glowing door frame
-    const fm = new THREE.MeshBasicMaterial({color:0x45dcf0});
-    [[-DOOR_W/2 - .03, .04, DOOR_H, DOOR_H/2], [DOOR_W/2 + .03, .04, DOOR_H, DOOR_H/2], [0, DOOR_W + .1, .04, DOOR_H + .02]].forEach(([x, w, h, y]) => {
-      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .05), fm); b.position.set(x, y, Z0 + .13); scene.add(b);
-    });
-    // sign above the door
-    const sc = document.createElement('canvas'); sc.width = 1024; sc.height = 160;
-    const sg = sc.getContext('2d');
-    const signTex = new THREE.CanvasTexture(sc); signTex.encoding = THREE.sRGBEncoding; signTex.anisotropy = 4;
-    const drawSign = () => {
-      sg.clearRect(0, 0, 1024, 160);
-      sg.font = '600 46px "JetBrains Mono", ui-monospace, monospace'; sg.textAlign = 'center'; sg.textBaseline = 'middle';
-      sg.shadowColor = 'rgba(109,106,248,.9)'; sg.shadowBlur = 24; sg.fillStyle = '#eef0fa';
-      sg.fillText('M I   S T U D I O', 512, 80); signTex.needsUpdate = true;
+    const steel = new THREE.MeshStandardMaterial({color:0xb9bcc6, roughness:.32, metalness:.85});
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(FRONT_W + .1, .22, .16), new THREE.MeshStandardMaterial({color:0x2b2d35, roughness:.45, metalness:.7}));
+    rail.position.set(0, DOOR_H + .11, Z0 + .2); scene.add(rail);
+    const sensor = new THREE.Mesh(new THREE.BoxGeometry(.34, .07, .08), new THREE.MeshStandardMaterial({color:0x111216, roughness:.5}));
+    sensor.position.set(0, DOOR_H - .035, Z0 + .26); scene.add(sensor);
+    const led = new THREE.Mesh(new THREE.SphereGeometry(.018, 12, 8), new THREE.MeshBasicMaterial({color:0xff4d5e}));
+    led.position.set(.12, DOOR_H - .05, Z0 + .305); scene.add(led);
+    // sign: "MI STUDIO" letters lit from behind
+    {
+      const [c, g] = cv(1024, 160);
+      const sTex = tex(c);
+      var drawSign = () => {
+        g.clearRect(0, 0, 1024, 160); g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.font = '600 64px "Space Grotesk", system-ui, sans-serif';
+        g.shadowColor = 'rgba(143,140,255,1)'; g.shadowBlur = 30; g.fillStyle = 'rgba(143,140,255,.9)'; g.fillText('MI STUDIO', 512, 84);
+        g.shadowBlur = 0; g.fillStyle = '#f4f5fb'; g.fillText('MI STUDIO', 512, 80); sTex.needsUpdate = true;
+      };
+      drawSign();
+      const s = new THREE.Mesh(new THREE.PlaneGeometry(3.4, .53), new THREE.MeshBasicMaterial({map: sTex, transparent:true}));
+      s.position.set(0, DOOR_H + .22 + (top - .22)/2, Z0 + .16); scene.add(s);
+    }
+    // glass: four panels, the two in the middle slide. Clear glass, a soft reflection and green-tinted edges.
+    const glassMat = new THREE.MeshStandardMaterial({color:0x8fb0c4, transparent:true, opacity:.05, roughness:.04, metalness:.2, depthWrite:false, side:THREE.DoubleSide});
+    const edgeMat = new THREE.MeshBasicMaterial({color:0x8fd6c8, transparent:true, opacity:.45});
+    let glareTex;
+    { const [c, g] = cv(256, 256);
+      const st = (x, w, a) => { const gr = g.createLinearGradient(x - w, 0, x + w, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.5, `rgba(255,255,255,${a})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(x - w, 0, w*2, 256); };
+      g.save(); g.translate(128, 128); g.rotate(-.5); g.translate(-128, -128); st(84, 26, .10); st(120, 5, .08); g.restore();
+      glareTex = tex(c); }
+    const glareMat = new THREE.MeshBasicMaterial({map: glareTex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:.35});
+    // etched lettering and a frosted band; one picture for both sliding doors, each shows its half
+    const [ec, eg] = cv(2048, Math.round(2048 * DOOR_H / DOOR_W));
+    const EW = ec.width, EH = ec.height, etchTex = tex(ec);
+    function wrapText(t, maxW){ const ws = t.split(' '), ls = []; let l = ''; ws.forEach(w => { const s = l ? l + ' ' + w : w; if(eg.measureText(s).width > maxW && l){ ls.push(l); l = w; } else l = s; }); if(l) ls.push(l); return ls; }
+    var drawEtch = () => {
+      eg.clearRect(0, 0, EW, EH);
+      // top: etched logo and kicker
+      eg.save(); const L = 240; eg.translate(EW/2 - L/2, EH*.12); eg.scale(L/64, L/64);
+      eg.lineWidth = 2.8; eg.strokeStyle = 'rgba(244,247,255,.92)'; eg.beginPath(); if(eg.roundRect) eg.roundRect(1.5, 1.5, 61, 49, 10); else eg.rect(1.5, 1.5, 61, 49); eg.stroke();
+      eg.fillStyle = 'rgba(244,247,255,.92)'; eg.fill(new Path2D('M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z')); eg.fillRect(45, 20, 6, 20);
+      eg.fillStyle = 'rgba(69,220,240,1)'; eg.fillRect(45, 12, 6, 5.5); eg.restore();
+      eg.textAlign = 'center';
+      // frosted band at eye height carries the welcome text
+      const y0 = EH*.38, y1 = EH*.74;
+      let gr = eg.createLinearGradient(0, y0, 0, y1);
+      gr.addColorStop(0, 'rgba(232,238,252,.62)'); gr.addColorStop(1, 'rgba(222,230,248,.55)');
+      eg.fillStyle = gr; eg.fillRect(0, y0, EW, y1 - y0);
+      eg.fillStyle = 'rgba(255,255,255,.7)'; eg.fillRect(0, y0, EW, 4); eg.fillRect(0, y1 - 4, EW, 4);
+      eg.fillStyle = '#4b48d6'; eg.font = '600 38px "JetBrains Mono", ui-monospace, monospace';
+      eg.fillText('MEDIENINFORMATIK  ·  UX/UI DESIGN', EW/2, y0 + 92);
+      eg.fillStyle = '#12132a'; eg.font = '700 132px "Space Grotesk", system-ui, sans-serif';
+      eg.fillText('Willkommen in', EW/2, y0 + 250);
+      eg.fillText('meinem Studio', EW/2, y0 + 380);
+      eg.fillStyle = '#2a2c48'; eg.font = '500 46px Inter, system-ui, sans-serif';
+      wrapText('Ich bin Mohamad Issa. Gehen Sie durch mein Studio: Jeder Bildschirm zeigt einen Teil meiner Website, und alles darauf ist klickbar.', EW*.66)
+        .forEach((l, i) => eg.fillText(l, EW/2, y0 + 480 + i*62));
+      // bottom: small etched line
+      eg.fillStyle = 'rgba(244,247,255,.6)'; eg.font = '500 30px "JetBrains Mono", ui-monospace, monospace';
+      eg.fillText('GEÖFFNET  ·  RUND UM DIE UHR', EW/2, EH*.92);
+      etchTex.needsUpdate = true;
     };
-    drawSign();
-    const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, .5), new THREE.MeshBasicMaterial({map:signTex, transparent:true}));
-    sign.position.set(0, DOOR_H + lint/2, Z0 + .13); scene.add(sign);
-    // the welcome text lives on the two glass doors; each door shows one half of the same picture
-    const dc = document.createElement('canvas'); dc.width = 2048; dc.height = Math.round(2048 * DOOR_H / DOOR_W);
-    const dg = dc.getContext('2d'), DW = dc.width, DH = dc.height;
-    const doorTex = new THREE.CanvasTexture(dc); doorTex.encoding = THREE.sRGBEncoding; doorTex.anisotropy = 8;
-    function wrap(text, maxW){ const words = text.split(' '), lines = []; let l = '';
-      words.forEach(w => { const t = l ? l + ' ' + w : w; if(dg.measureText(t).width > maxW && l){ lines.push(l); l = w; } else l = t; }); if(l) lines.push(l); return lines; }
-    const drawDoor = () => {
-      dg.clearRect(0, 0, DW, DH);
-      // frosted glass
-      let g = dg.createLinearGradient(0, 0, 0, DH);
-      g.addColorStop(0, 'rgba(14,15,34,.9)'); g.addColorStop(.5, 'rgba(8,9,22,.94)'); g.addColorStop(1, 'rgba(14,15,34,.9)');
-      dg.fillStyle = g; dg.fillRect(0, 0, DW, DH);
-      g = dg.createRadialGradient(DW/2, DH*.42, 0, DW/2, DH*.42, DW*.6);
-      g.addColorStop(0, 'rgba(109,106,248,.22)'); g.addColorStop(1, 'rgba(109,106,248,0)');
-      dg.fillStyle = g; dg.fillRect(0, 0, DW, DH);
-      // door edges and the gap in the middle
-      dg.strokeStyle = 'rgba(200,205,255,.35)'; dg.lineWidth = 6;
-      dg.strokeRect(3, 3, DW/2 - 6, DH - 6); dg.strokeRect(DW/2 + 3, 3, DW/2 - 6, DH - 6);
-      // handles
-      dg.fillStyle = 'rgba(220,224,255,.75)';
-      dg.fillRect(DW/2 - 70, DH*.84, 14, DH*.12); dg.fillRect(DW/2 + 56, DH*.84, 14, DH*.12);
-      // logo
-      dg.save(); const L = 230; dg.translate(DW/2 - L/2, DH*.08); dg.scale(L/64, L/64);
-      dg.shadowColor = 'rgba(109,106,248,.9)'; dg.shadowBlur = 18;
-      dg.lineWidth = 3; dg.strokeStyle = '#6d6af8'; dg.beginPath(); if(dg.roundRect) dg.roundRect(1.5, 1.5, 61, 49, 10); else dg.rect(1.5, 1.5, 61, 49); dg.stroke();
-      dg.fillStyle = '#eef0fa'; dg.fill(new Path2D('M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z')); dg.fillRect(45, 20, 6, 20);
-      dg.fillStyle = '#45dcf0'; dg.fillRect(45, 12, 6, 5.5); dg.restore();
-      dg.textAlign = 'center'; dg.textBaseline = 'alphabetic';
-      // kicker
-      dg.font = '500 46px "JetBrains Mono", ui-monospace, monospace'; dg.fillStyle = '#45dcf0';
-      dg.fillText('MI STUDIO · MEDIENINFORMATIK · UX/UI DESIGN', DW/2, DH*.355);
-      // headline: gradient + outlined "Studio", as on the website
-      dg.font = '700 190px "Space Grotesk", system-ui, sans-serif';
-      g = dg.createLinearGradient(DW*.12, 0, DW*.88, 0);
-      g.addColorStop(0, '#d9d7ff'); g.addColorStop(.35, '#8f8cff'); g.addColorStop(.6, '#6d6af8'); g.addColorStop(1, '#45dcf0');
-      dg.fillStyle = g; dg.fillText('Willkommen in', DW/2, DH*.5);
-      dg.fillText('meinem', DW/2 - 250, DH*.5 + 190);
-      dg.lineWidth = 5; dg.strokeStyle = '#45dcf0'; dg.shadowColor = 'rgba(69,220,240,.6)'; dg.shadowBlur = 20;
-      dg.textAlign = 'left'; dg.strokeText('Studio', DW/2 - 250 + dg.measureText('meinem').width/2 + 40, DH*.5 + 190);
-      dg.shadowBlur = 0; dg.textAlign = 'center';
-      // text
-      dg.font = '400 58px Inter, system-ui, sans-serif'; dg.fillStyle = '#d4d8ee';
-      wrap('Ich bin Mohamad Issa. Gehen Sie durch mein Studio: Jeder Bildschirm zeigt einen Teil meiner Website, und alles darauf ist klickbar.', DW*.72)
-        .forEach((l, i) => dg.fillText(l, DW/2, DH*.75 + i * 78));
-      doorTex.needsUpdate = true;
-    };
-    drawDoor();
-    if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawDoor(); drawSign(); });
-    const doorMat = new THREE.MeshBasicMaterial({map:doorTex, transparent:true, side:THREE.DoubleSide, depthWrite:false});
-    const half = u0 => { const g = new THREE.PlaneGeometry(DOOR_W/2, DOOR_H); const uv = g.attributes.uv;
-      for(let i = 0; i < uv.count; i++) uv.setX(i, u0 + uv.getX(i) * .5); uv.needsUpdate = true; return g; };
-    var doorL = new THREE.Mesh(half(0), doorMat), doorR = new THREE.Mesh(half(.5), doorMat);
-    doorL.position.set(-DOOR_W/4, DOOR_H/2, Z0 + .16); doorR.position.set(DOOR_W/4, DOOR_H/2, Z0 + .16);
-    scene.add(doorL, doorR);
-    const runway = new THREE.Mesh(new THREE.PlaneGeometry(.025, VEST_L - .3), new THREE.MeshBasicMaterial({color:0x6d6af8, transparent:true, opacity:.35}));
-    runway.rotation.x = -Math.PI/2; runway.position.set(0, .004, Z0 + VEST_L/2 + .15); scene.add(runway);
-    const porch = new THREE.PointLight(0x8f8cff, .7, 7, 2); porch.position.set(0, 3.1, Z0 + 2.2); scene.add(porch);
-    if(doorState === 'open'){ doorL.position.x = -DOOR_W/4 - DOOR_W/2 - .02; doorR.position.x = DOOR_W/4 + DOOR_W/2 + .02; }
+    drawEtch();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawEtch(); drawSign(); redrawLogo(); });
+    const etchMat = new THREE.MeshBasicMaterial({map: etchTex, transparent:true, depthWrite:false, side:THREE.DoubleSide});
+    const PW = FRONT_W / 4;
+    function panel(x, z, u0, moving){
+      const g = new THREE.Group(); g.position.set(x, DOOR_H/2, z);
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(PW - .02, DOOR_H - .02, .02), glassMat); g.add(glass);
+      [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.BoxGeometry(.012, DOOR_H - .02, .022), edgeMat); e.position.x = s*(PW/2 - .016); g.add(e); });
+      const gl = new THREE.Mesh(new THREE.PlaneGeometry(PW - .02, DOOR_H - .02), glareMat); gl.position.z = .013; g.add(gl);
+      if(u0 != null){
+        const geo = new THREE.PlaneGeometry(PW, DOOR_H), uv = geo.attributes.uv;
+        for(let i = 0; i < uv.count; i++) uv.setX(i, u0 + uv.getX(i) * .5); uv.needsUpdate = true;
+        const et = new THREE.Mesh(geo, etchMat); et.position.z = .014; g.add(et);
+      } else {
+        const band = new THREE.Mesh(new THREE.PlaneGeometry(PW - .02, DOOR_H * .36), new THREE.MeshBasicMaterial({color:0xe4eafa, transparent:true, opacity:.5, depthWrite:false}));
+        band.position.set(0, DOOR_H * (.5 - .56), .014); g.add(band);
+      }
+      if(moving){                                                                          // long steel bar handles on the inner edge
+        const hx = (u0 === 0 ? 1 : -1) * (PW/2 - .16);
+        [.06, -.06].forEach(dz => {
+          const bar = new THREE.Mesh(new THREE.CylinderGeometry(.016, .016, .62, 12), steel); bar.position.set(hx, -1.0, dz * 1.4); g.add(bar);
+          [.25, -.25].forEach(dy => { const st = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .06, 8), steel); st.rotation.x = Math.PI/2; st.position.set(hx, -1.0 + dy, dz * .7); g.add(st); });
+        });
+      }
+      scene.add(g); return g;
+    }
+    const zF = Z0 + .2, zS = Z0 + .3;
+    panel(-PW * 1.5, zF, null, false); panel(PW * 1.5, zF, null, false);
+    const dl = panel(-PW/2, zS, 0, true), dr = panel(PW/2, zS, .5, true);
+    slideDoors = s => { dl.position.x = -PW/2 - s * (PW - .04); dr.position.x = PW/2 + s * (PW - .04); led.material.color.setHex(s > 0 || doorState !== 'closed' ? 0x3ee08f : 0xff4d5e); };
+    if(doorState === 'open') slideDoors(1);
+    // a doormat with the logo
+    {
+      const [c, g] = cv(1024, 512);
+      g.fillStyle = '#121218'; g.fillRect(0, 0, 1024, 512);
+      for(let i = 0; i < 4000; i++){ g.fillStyle = `rgba(255,255,255,${rnd()*.04})`; g.fillRect(rnd()*1024, rnd()*512, 2, 2); }
+      g.strokeStyle = 'rgba(143,140,255,.55)'; g.lineWidth = 6; g.strokeRect(26, 26, 972, 460);
+      g.fillStyle = 'rgba(238,240,250,.75)'; g.font = '600 72px "Space Grotesk", system-ui, sans-serif'; g.textAlign = 'center'; g.fillText('WILLKOMMEN', 512, 290);
+      const mat = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.3), new THREE.MeshStandardMaterial({map: tex(c), roughness:1}));
+      mat.rotation.x = -Math.PI/2; mat.position.set(0, .012, Z0 + .95); scene.add(mat);
+    }
+    const lobby = new THREE.PointLight(0xfff0dc, .8, 10, 2); lobby.position.set(0, 3.3, Z0 + 3.2); scene.add(lobby);
   }
   const doorOutside = new THREE.Vector3(), doorLook = new THREE.Vector3(0, 1.3, Z0);
   function outsideDistance(){
@@ -1188,8 +1260,8 @@
       doorOutside.set(smx * .25, 1.62 - smy * .08, Z0 + outsideDistance());
       if(doorState === 'opening'){
         doorT += dt;
-        const sl = ease(Math.min(1, doorT / 1.1)), m = ease(Math.min(1, Math.max(0, (doorT - .35) / 1.9)));
-        doorL.position.x = -DOOR_W/4 - sl * (DOOR_W/2 + .02); doorR.position.x = DOOR_W/4 + sl * (DOOR_W/2 + .02);
+        const m = ease(Math.min(1, Math.max(0, (doorT - .55) / 2.0)));
+        slideDoors(ease(Math.max(0, Math.min(1, (doorT - .2) / 1.15))));   // sensor green, then the glass slides away
         P.lerpVectors(doorOutside, P, m); L.lerpVectors(doorLook, L, m);
         if(bloom) bloom.strength = .25 + .25 * m;
         if(m >= 1){ doorState = 'open'; document.documentElement.classList.remove('door-walk'); if(doorThen){ const f = doorThen; doorThen = null; f(); } }
