@@ -51,6 +51,17 @@
   }
   helloDev();
 
+
+  /* fallback fade when going back to the homepage */
+  if(!('CSSViewTransitionRule' in window) && !reduce){
+    document.querySelectorAll('a[href="index.html"]').forEach(a => a.addEventListener('click', e => {
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault(); document.documentElement.classList.add('leaving');
+      setTimeout(() => { location.href = a.href; }, 380);
+    }));
+    addEventListener('pageshow', () => document.documentElement.classList.remove('leaving'));
+  }
+
   /* ---------- stations ---------- */
   const stops = [...document.querySelectorAll('.stop')];
   const N = stops.length;

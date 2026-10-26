@@ -125,3 +125,12 @@ html.door .door-btn:focus-visible{outline:2px solid #45dcf0;outline-offset:4px}
 html.door-used .intro .kicker,html.door-used .intro h1,html.door-used .intro > p:not(.classic){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .prog,.tip{transition:opacity .6s}
 @media (prefers-reduced-motion:reduce){html.door .door-btn{animation:none}}
+
+/* smooth page change between the homepage and the studio (supported browsers fade, others jump as before) */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:mi-out .45s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:mi-in .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes mi-out{to{opacity:0;transform:scale(1.04);filter:blur(6px)}}
+@keyframes mi-in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+html.leaving body{opacity:0;transform:scale(1.03);filter:blur(4px);transition:opacity .4s ease,transform .45s ease,filter .4s ease}

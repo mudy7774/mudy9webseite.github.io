@@ -13,6 +13,9 @@ img/                Bilder (siehe img/BILDER-HIER-ABLEGEN.txt)
 
 zaehler.js          Besucherzähler ohne Cookies: Namen von goatcounter.com eintragen
 favicon.svg         kleines MI-Logo im Browser-Tab
+manifest.webmanifest + img/icons/   App-Symbol für "Zum Home-Bildschirm"
+img/studio-teaser.mp4              kurzes Video auf der 3D-Studio-Karte
+404.html            eigene Fehlerseite; sitemap.xml für Google
 
 Vorschaubild beim Teilen: img/preview.jpg, Link ist eingetragen
 (https://mudy7774.github.io/mudy9webseite.github.io/). Ändert sich der Link, in index.html und studio.html anpassen.

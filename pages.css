@@ -117,3 +117,12 @@ footer a:hover{color:var(--text)}
 @media (max-width:520px){
   .topbar nav a:nth-child(n+3){display:none}
 }
+
+/* smooth page change between the homepage and the studio (supported browsers fade, others jump as before) */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:mi-out .45s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:mi-in .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes mi-out{to{opacity:0;transform:scale(1.04);filter:blur(6px)}}
+@keyframes mi-in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+html.leaving body{opacity:0;transform:scale(1.03);filter:blur(4px);transition:opacity .4s ease,transform .45s ease,filter .4s ease}

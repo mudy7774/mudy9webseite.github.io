@@ -160,9 +160,11 @@ footer a:hover{color:var(--fg)}
 /* teaser for the 3D studio */
 .studio-card{position:relative;display:block;min-height:520px;border-radius:16px;overflow:hidden;border:1px solid var(--line);text-decoration:none;color:var(--fg);isolation:isolate}
 .studio-card picture{display:contents}
-.studio-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transform:scale(1.02);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.studio-card img,.studio-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transform:scale(1.02);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
 .studio-card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,5,8,.94) 0%,rgba(5,5,8,.75) 42%,rgba(5,5,8,.15) 100%)}
-.studio-card:hover img{transform:scale(1.07)}
+.studio-card:hover img,.studio-card:hover .studio-vid{transform:scale(1.07)}
+.studio-vid{opacity:0;transition:opacity .8s ease,transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.studio-vid.on{opacity:1}
 .studio-card:hover{border-color:rgba(69,220,240,.5)}
 .studio-txt{position:relative;max-width:560px;padding:56px 48px}
 .studio-txt .h2{margin-bottom:18px}
@@ -170,6 +172,7 @@ footer a:hover{color:var(--fg)}
 @media (max-width:860px){
   .studio-card{min-height:0}
   .studio-card img{object-position:62% 75%}
+  .studio-vid{object-position:50% 60%}
   .studio-card::before{background:linear-gradient(180deg,rgba(5,5,8,.2) 0%,rgba(5,5,8,.92) 45%)}
   .studio-txt{padding:200px 22px 28px}
 }
@@ -191,3 +194,12 @@ html.mi-solo .hud .tl,html.mi-solo .hud .tr{top:18px}
 .skip{position:fixed;left:16px;top:-60px;z-index:200;background:#eef0fa;color:#050508;font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;padding:12px 18px;border-radius:8px;transition:top .2s}
 .skip:focus{top:16px;outline:2px solid var(--cyan);outline-offset:3px}
 html.mi-solo .skip{display:none}
+
+/* smooth page change between the homepage and the studio (supported browsers fade, others jump as before) */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:mi-out .45s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:mi-in .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes mi-out{to{opacity:0;transform:scale(1.04);filter:blur(6px)}}
+@keyframes mi-in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+html.leaving body{opacity:0;transform:scale(1.03);filter:blur(4px);transition:opacity .4s ease,transform .45s ease,filter .4s ease}

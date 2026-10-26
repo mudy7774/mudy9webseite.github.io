@@ -385,6 +385,37 @@
   }
   if(!soloEl && window.self === window.top) helloDev();
 
+
+  /* fallback fade for browsers without page transitions */
+  if(!soloEl && !('CSSViewTransitionRule' in window) && !reduce){
+    document.querySelectorAll('a[href="studio.html"]').forEach(a => a.addEventListener('click', e => {
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault(); document.documentElement.classList.add('leaving');
+      setTimeout(() => { location.href = a.href; }, 380);
+    }));
+    addEventListener('pageshow', () => document.documentElement.classList.remove('leaving'));
+  }
+
+
+  /* the studio card plays a short silent clip, loaded only when it comes close (and never with reduced motion or data saver) */
+  const vid = document.querySelector('.studio-vid');
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if(vid && !reduce && !saveData && !soloEl && 'IntersectionObserver' in window){
+    let loaded = false;
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if(e.isIntersecting){
+        if(!loaded){
+          loaded = true;
+          [['mp4', 'video/mp4'], ['webm', 'video/webm']].forEach(([k, type]) => { const s = document.createElement('source'); s.src = vid.dataset['src' + k[0].toUpperCase() + k.slice(1)]; s.type = type; vid.appendChild(s); });
+          vid.load();
+          vid.addEventListener('playing', () => vid.classList.add('on'), {once: true});
+        }
+        const p = vid.play(); if(p && p.catch) p.catch(() => {});
+      } else vid.pause();
+    }), {rootMargin: '300px 0px'});
+    io.observe(vid);
+  }
+
   /* ---------- small things ---------- */
   const clock = document.getElementById('clock');
   const fmt = new Intl.DateTimeFormat('de-DE', {hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin'});

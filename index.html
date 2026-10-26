@@ -32,6 +32,12 @@
       "sameAs": ["https://linkedin.com/in/mohamad-issa-35660a3a6/", "https://instagram.com/mudy_iss/"]
     }
     </script>
+    <meta name="theme-color" content="#050508">
+    <meta name="color-scheme" content="dark">
+    <meta name="apple-mobile-web-app-title" content="MI Studio">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>Mohamad Issa | Medieninformatik, UX/UI Design &amp; Webentwicklung</title>
     <link rel="stylesheet" href="fonts/fonts.css">
@@ -139,6 +145,8 @@
     <section class="block" id="studio" style="padding-top:0">
       <a class="studio-card" href="studio.html">
         <picture><source srcset="img/studio-preview.webp" type="image/webp"><img src="img/studio-preview.jpg" alt="Blick in das 3D-Studio von Mohamad Issa: ein nächtliches Büro mit Monitoren und dem leuchtenden MI-Logo" loading="lazy"></picture>
+        <!-- short silent loop of the studio; loads only when the card comes into view -->
+        <video class="studio-vid" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src-mp4="img/studio-teaser.mp4" data-src-webm="img/studio-teaser.webm"></video>
         <div class="studio-txt">
           <div class="label">Noch mehr sehen</div>
           <h2 class="h2">Betreten Sie mein <span class="acc">3D-Studio.</span></h2>
