@@ -978,6 +978,139 @@
     soundBtn.setAttribute('aria-label', soundOn ? 'Ton ausschalten' : 'Ton einschalten');
   });
 
+
+  /* ---------- entrance: a glass sliding door with the welcome text ----------
+     The studio starts outside. Scroll, click or press a key: the doors slide open and the camera walks in. */
+  const DOOR_W = 3.2, DOOR_H = 3.0, VEST_W = 7.4, VEST_H = 3.7, VEST_L = 11;
+  const skipDoor = reduce || /^#s[1-9]/.test(location.hash);
+  let doorState = skipDoor ? 'open' : 'closed', doorT = 0, doorThen = null;
+  {
+    const wallMat = new THREE.MeshStandardMaterial({color:0x05060c, roughness:.9, metalness:.1});
+    const zc = Z0 + VEST_L/2;
+    // vestibule: floor, ceiling, side walls
+    const vf = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshStandardMaterial({color:0x04050a, roughness:.4, metalness:.4}));
+    vf.rotation.x = -Math.PI/2; vf.position.set(0, .001, zc); scene.add(vf);
+    const vc = new THREE.Mesh(new THREE.PlaneGeometry(VEST_W, VEST_L), new THREE.MeshBasicMaterial({color:0x040409}));
+    vc.rotation.x = Math.PI/2; vc.position.set(0, VEST_H, zc); scene.add(vc);
+    [-1, 1].forEach(side => {
+      const w = new THREE.Mesh(new THREE.PlaneGeometry(VEST_L, VEST_H), wallMat);
+      w.rotation.y = -side * Math.PI/2; w.position.set(side * VEST_W/2, VEST_H/2, zc); scene.add(w);
+      // thin light lines along the walls and the ceiling lead to the door
+      const ln = new THREE.Mesh(new THREE.BoxGeometry(.03, .03, VEST_L), new THREE.MeshBasicMaterial({color: side < 0 ? 0x6d6af8 : 0x45dcf0}));
+      ln.position.set(side * (VEST_W/2 - .02), .45, zc); scene.add(ln);
+    });
+    // front wall around the doorway
+    const side = (VEST_W - DOOR_W)/2, lint = VEST_H - DOOR_H;
+    [[-(DOOR_W/2 + side/2), side, VEST_H, VEST_H/2], [DOOR_W/2 + side/2, side, VEST_H, VEST_H/2], [0, DOOR_W, lint, DOOR_H + lint/2]].forEach(([x, w, h, y]) => {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .24), wallMat); b.position.set(x, y, Z0); scene.add(b);
+    });
+    // glowing door frame
+    const fm = new THREE.MeshBasicMaterial({color:0x45dcf0});
+    [[-DOOR_W/2 - .03, .04, DOOR_H, DOOR_H/2], [DOOR_W/2 + .03, .04, DOOR_H, DOOR_H/2], [0, DOOR_W + .1, .04, DOOR_H + .02]].forEach(([x, w, h, y]) => {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .05), fm); b.position.set(x, y, Z0 + .13); scene.add(b);
+    });
+    // sign above the door
+    const sc = document.createElement('canvas'); sc.width = 1024; sc.height = 160;
+    const sg = sc.getContext('2d');
+    const signTex = new THREE.CanvasTexture(sc); signTex.encoding = THREE.sRGBEncoding; signTex.anisotropy = 4;
+    const drawSign = () => {
+      sg.clearRect(0, 0, 1024, 160);
+      sg.font = '600 46px "JetBrains Mono", ui-monospace, monospace'; sg.textAlign = 'center'; sg.textBaseline = 'middle';
+      sg.shadowColor = 'rgba(109,106,248,.9)'; sg.shadowBlur = 24; sg.fillStyle = '#eef0fa';
+      sg.fillText('M I   S T U D I O', 512, 80); signTex.needsUpdate = true;
+    };
+    drawSign();
+    const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, .5), new THREE.MeshBasicMaterial({map:signTex, transparent:true}));
+    sign.position.set(0, DOOR_H + lint/2, Z0 + .13); scene.add(sign);
+    // the welcome text lives on the two glass doors; each door shows one half of the same picture
+    const dc = document.createElement('canvas'); dc.width = 2048; dc.height = Math.round(2048 * DOOR_H / DOOR_W);
+    const dg = dc.getContext('2d'), DW = dc.width, DH = dc.height;
+    const doorTex = new THREE.CanvasTexture(dc); doorTex.encoding = THREE.sRGBEncoding; doorTex.anisotropy = 8;
+    function wrap(text, maxW){ const words = text.split(' '), lines = []; let l = '';
+      words.forEach(w => { const t = l ? l + ' ' + w : w; if(dg.measureText(t).width > maxW && l){ lines.push(l); l = w; } else l = t; }); if(l) lines.push(l); return lines; }
+    const drawDoor = () => {
+      dg.clearRect(0, 0, DW, DH);
+      // frosted glass
+      let g = dg.createLinearGradient(0, 0, 0, DH);
+      g.addColorStop(0, 'rgba(14,15,34,.9)'); g.addColorStop(.5, 'rgba(8,9,22,.94)'); g.addColorStop(1, 'rgba(14,15,34,.9)');
+      dg.fillStyle = g; dg.fillRect(0, 0, DW, DH);
+      g = dg.createRadialGradient(DW/2, DH*.42, 0, DW/2, DH*.42, DW*.6);
+      g.addColorStop(0, 'rgba(109,106,248,.22)'); g.addColorStop(1, 'rgba(109,106,248,0)');
+      dg.fillStyle = g; dg.fillRect(0, 0, DW, DH);
+      // door edges and the gap in the middle
+      dg.strokeStyle = 'rgba(200,205,255,.35)'; dg.lineWidth = 6;
+      dg.strokeRect(3, 3, DW/2 - 6, DH - 6); dg.strokeRect(DW/2 + 3, 3, DW/2 - 6, DH - 6);
+      // handles
+      dg.fillStyle = 'rgba(220,224,255,.75)';
+      dg.fillRect(DW/2 - 70, DH*.84, 14, DH*.12); dg.fillRect(DW/2 + 56, DH*.84, 14, DH*.12);
+      // logo
+      dg.save(); const L = 230; dg.translate(DW/2 - L/2, DH*.08); dg.scale(L/64, L/64);
+      dg.shadowColor = 'rgba(109,106,248,.9)'; dg.shadowBlur = 18;
+      dg.lineWidth = 3; dg.strokeStyle = '#6d6af8'; dg.beginPath(); if(dg.roundRect) dg.roundRect(1.5, 1.5, 61, 49, 10); else dg.rect(1.5, 1.5, 61, 49); dg.stroke();
+      dg.fillStyle = '#eef0fa'; dg.fill(new Path2D('M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z')); dg.fillRect(45, 20, 6, 20);
+      dg.fillStyle = '#45dcf0'; dg.fillRect(45, 12, 6, 5.5); dg.restore();
+      dg.textAlign = 'center'; dg.textBaseline = 'alphabetic';
+      // kicker
+      dg.font = '500 46px "JetBrains Mono", ui-monospace, monospace'; dg.fillStyle = '#45dcf0';
+      dg.fillText('MI STUDIO · MEDIENINFORMATIK · UX/UI DESIGN', DW/2, DH*.355);
+      // headline: gradient + outlined "Studio", as on the website
+      dg.font = '700 190px "Space Grotesk", system-ui, sans-serif';
+      g = dg.createLinearGradient(DW*.12, 0, DW*.88, 0);
+      g.addColorStop(0, '#d9d7ff'); g.addColorStop(.35, '#8f8cff'); g.addColorStop(.6, '#6d6af8'); g.addColorStop(1, '#45dcf0');
+      dg.fillStyle = g; dg.fillText('Willkommen in', DW/2, DH*.5);
+      dg.fillText('meinem', DW/2 - 250, DH*.5 + 190);
+      dg.lineWidth = 5; dg.strokeStyle = '#45dcf0'; dg.shadowColor = 'rgba(69,220,240,.6)'; dg.shadowBlur = 20;
+      dg.textAlign = 'left'; dg.strokeText('Studio', DW/2 - 250 + dg.measureText('meinem').width/2 + 40, DH*.5 + 190);
+      dg.shadowBlur = 0; dg.textAlign = 'center';
+      // text
+      dg.font = '400 58px Inter, system-ui, sans-serif'; dg.fillStyle = '#d4d8ee';
+      wrap('Ich bin Mohamad Issa. Gehen Sie durch mein Studio: Jeder Bildschirm zeigt einen Teil meiner Website, und alles darauf ist klickbar.', DW*.72)
+        .forEach((l, i) => dg.fillText(l, DW/2, DH*.75 + i * 78));
+      doorTex.needsUpdate = true;
+    };
+    drawDoor();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawDoor(); drawSign(); });
+    const doorMat = new THREE.MeshBasicMaterial({map:doorTex, transparent:true, side:THREE.DoubleSide, depthWrite:false});
+    const half = u0 => { const g = new THREE.PlaneGeometry(DOOR_W/2, DOOR_H); const uv = g.attributes.uv;
+      for(let i = 0; i < uv.count; i++) uv.setX(i, u0 + uv.getX(i) * .5); uv.needsUpdate = true; return g; };
+    var doorL = new THREE.Mesh(half(0), doorMat), doorR = new THREE.Mesh(half(.5), doorMat);
+    doorL.position.set(-DOOR_W/4, DOOR_H/2, Z0 + .16); doorR.position.set(DOOR_W/4, DOOR_H/2, Z0 + .16);
+    scene.add(doorL, doorR);
+    const runway = new THREE.Mesh(new THREE.PlaneGeometry(.025, VEST_L - .3), new THREE.MeshBasicMaterial({color:0x6d6af8, transparent:true, opacity:.35}));
+    runway.rotation.x = -Math.PI/2; runway.position.set(0, .004, Z0 + VEST_L/2 + .15); scene.add(runway);
+    const porch = new THREE.PointLight(0x8f8cff, .7, 7, 2); porch.position.set(0, 3.1, Z0 + 2.2); scene.add(porch);
+    if(doorState === 'open'){ doorL.position.x = -DOOR_W/4 - DOOR_W/2 - .02; doorR.position.x = DOOR_W/4 + DOOR_W/2 + .02; }
+  }
+  const doorOutside = new THREE.Vector3(), doorLook = new THREE.Vector3(0, 1.3, Z0);
+  function outsideDistance(){
+    const t = Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+    return Math.min(VEST_L - .6, Math.max(4.4, (DOOR_W + .9) / (2 * t * camera.aspect), (DOOR_H + 2.3) / (2 * t)));
+  }
+  function openDoor(then){
+    if(doorState !== 'closed'){ if(then) then(); return; }
+    doorState = 'opening'; doorT = 0; doorThen = then || null;
+    document.documentElement.classList.remove('door'); document.documentElement.classList.add('door-walk');
+    blip();
+  }
+  if(doorState === 'closed'){
+    document.documentElement.classList.add('door', 'door-used');
+    if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    scrollTo(0, 0);
+    const opener = e => {
+      if(doorState !== 'closed') return;
+      if(e.type === 'keydown' && !['ArrowDown', 'PageDown', ' ', 'Enter', 'Spacebar'].includes(e.key)) return;
+      if(e.type === 'click' && e.target.closest && e.target.closest('.hud, .prog, a, button:not(#doorBtn)')) return;
+      if(e.cancelable && e.type !== 'click') e.preventDefault();
+      if(e.type === 'click') e.stopPropagation();   // the first click only opens the door
+      openDoor();
+    };
+    addEventListener('wheel', opener, {passive:false});
+    addEventListener('touchmove', opener, {passive:false});
+    addEventListener('keydown', opener);
+    addEventListener('click', opener, true);
+    tourBtn.addEventListener('click', e => { if(doorState === 'closed'){ e.stopImmediatePropagation(); openDoor(() => startTour()); } }, true);
+  }
+
   /* ---------- camera + loop ---------- */
   let cur = 0, mx = 0, my = 0, smx = 0, smy = 0, t0 = performance.now(), time = 0;
   addEventListener('pointermove', e => { mx = e.clientX/innerWidth - .5; my = e.clientY/innerHeight - .5; }, {passive:true});
@@ -1050,6 +1183,18 @@
       L.lerpVectors(LA, M, Math.min(1, park*1.15));
       P.x += smx * .04 * (1 - park); P.y -= smy * .03 * (1 - park);
     } else { P.copy(A); L.copy(LA); }
+    // outside the door, then walking in
+    if(doorState !== 'open'){
+      doorOutside.set(smx * .25, 1.62 - smy * .08, Z0 + outsideDistance());
+      if(doorState === 'opening'){
+        doorT += dt;
+        const sl = ease(Math.min(1, doorT / 1.1)), m = ease(Math.min(1, Math.max(0, (doorT - .35) / 1.9)));
+        doorL.position.x = -DOOR_W/4 - sl * (DOOR_W/2 + .02); doorR.position.x = DOOR_W/4 + sl * (DOOR_W/2 + .02);
+        P.lerpVectors(doorOutside, P, m); L.lerpVectors(doorLook, L, m);
+        if(bloom) bloom.strength = .25 + .25 * m;
+        if(m >= 1){ doorState = 'open'; document.documentElement.classList.remove('door-walk'); if(doorThen){ const f = doorThen; doorThen = null; f(); } }
+      } else { P.copy(doorOutside); L.copy(doorLook); if(bloom) bloom.strength = .25; }
+    }
     camera.position.copy(P);
     camera.lookAt(L);
 

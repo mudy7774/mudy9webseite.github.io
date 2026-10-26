@@ -36,7 +36,16 @@
     const range = [[0, .9], [.25, .92], [.25, .75]][soloScene], p = range[0] + (range[1] - range[0]) * k;
     return scenes.map((_, i) => i < soloScene ? 1 : i === soloScene ? p : 0);
   }
-  let W = 0, H = 0, DPR = 1, mobile = false;
+  let W = 0, H = 0, DPR = 1, mobile = false, dprCap = 2;
+  // automatic quality: a slow device gets a lighter stage (fewer pixels) instead of a stuttering one
+  const fps = {n: 0, t: 0, drops: 0};
+  function adapt(dt){
+    if(document.hidden || dt > .5) return;
+    fps.n++; fps.t += dt;
+    if(fps.t < 1.5) return;
+    const rate = fps.n / fps.t; fps.n = 0; fps.t = 0;
+    if(rate < 40 && DPR > .75 && fps.drops < 3){ fps.drops++; dprCap = Math.max(.75, DPR - .35); resize(); }
+  }
 
   /* ---------- helpers ---------- */
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -47,7 +56,7 @@
 
   function resize(){
     W = innerWidth; H = innerHeight; mobile = W < 860;
-    DPR = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);   // phones: fewer pixels, smoother scrolling
+    DPR = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2, dprCap);   // phones: fewer pixels, smoother scrolling
     cvs.width = Math.round(W * DPR); cvs.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     smk.width = Math.ceil(W / 4); smk.height = Math.ceil(H / 4);   // smoke is soft anyway: draw it at quarter size
@@ -58,7 +67,8 @@
   /* ---------- the photo ---------- */
   const img = new Image();
   img.decoding = 'async';
-  img.src = window.MI_PHOTO || 'img/portrait.jpg';
+  const webp = (() => { try { return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0; } catch(e){ return false; } })();
+  img.src = window.MI_PHOTO || (webp ? 'img/portrait.webp' : 'img/portrait.jpg');
   const FACE = {x: .506, y: .215};          // face centre in the photo (relative)
   let wire = null, ready = false, photo = null;
 
@@ -181,7 +191,8 @@
   let t0 = performance.now(), time = 0, faceAnchor = .68, idle = false;
   const hud = {};
   function frame(now){
-    const dt = Math.min(.05, (now - t0) / 1000); t0 = now; if(!reduce) time += dt;
+    const rawDt = (now - t0) / 1000, dt = Math.min(.05, rawDt); t0 = now; if(!reduce) time += dt;
+    if(!idle && !soloEl) adapt(rawDt);
     const P = soloScene >= 0 ? soloProgress(time) : scenes.map(progressOf);
     const p1 = P[0], p2 = P[1], p3 = P[2];
     const in2 = ease(clamp(p2 * 4)), in3 = ease(clamp(p3 * 4));
@@ -233,11 +244,11 @@
       ctx.globalCompositeOperation = 'overlay';
       let g = ctx.createRadialGradient(lx, ly, 0, lx, ly, R.w * .55);
       g.addColorStop(0, `rgba(120,200,255,${.55 * w1})`); g.addColorStop(.5, `rgba(109,106,248,${.25 * w1})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.fillRect(R.x, R.y, R.w, R.h);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = 'screen';
       g = ctx.createRadialGradient(lx, ly, 0, lx, ly, R.w * .3);
       g.addColorStop(0, `rgba(160,230,255,${.12 * w1})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.fillRect(R.x, R.y, R.w, R.h);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
     // smoke and embers (all scenes, a little less in scene 3)
@@ -345,7 +356,12 @@
     if(soloEl && !soloActive) setTimeout(() => requestAnimationFrame(frame), 250); else requestAnimationFrame(frame);
   }
 
-  img.onload = () => { photo = feather(img, img.naturalWidth, img.naturalHeight); const wr = makeWire(); wire = wr ? feather(wr, wr.width, wr.height) : null; ready = true; };
+  img.onload = () => {
+    photo = feather(img, img.naturalWidth, img.naturalHeight); ready = true;
+    // the wireframe for scene 3 is prepared later, when the browser is idle, so the first paint stays fast
+    const prep = () => { if(wire) return; const wr = makeWire(); wire = wr ? feather(wr, wr.width, wr.height) : null; };
+    if(soloScene === 2) prep(); else if('requestIdleCallback' in window) requestIdleCallback(prep, {timeout: 2500}); else setTimeout(prep, 1200);
+  };
   img.onerror = () => { ready = false; loader.classList.add('done'); };
   setTimeout(() => loader.classList.add('done'), 6000);
   resize();

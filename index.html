@@ -36,9 +36,13 @@
     <title>Mohamad Issa | Medieninformatik, UX/UI Design &amp; Webentwicklung</title>
     <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="stylesheet" href="cine.css">
-    <link rel="preload" as="image" href="img/portrait.jpg">
+    <link rel="preload" as="image" href="img/portrait.webp" type="image/webp">
+    <link rel="preload" as="font" type="font/woff2" href="fonts/space-grotesk-latin-700-normal.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="fonts/inter-latin-400-normal.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="fonts/jetbrains-mono-latin-500-normal.woff2" crossorigin>
 </head>
 <body>
+<a class="skip" href="#projekte">Direkt zu den Projekten</a>
 <div id="loader" role="status" aria-label="Seite wird geladen">
   <svg viewBox="0 0 64 52" aria-hidden="true"><rect class="ld-f" x="1.5" y="1.5" width="61" height="49" rx="10" fill="none" stroke="#6d6af8" stroke-width="3"/><g class="ld-p"><path d="M12 40V12h6l8 11 8-11h6v28h-6V22l-8 10.5L18 22v18z" fill="#fff"/><rect x="45" y="20" width="6" height="20" fill="#fff"/><rect x="45" y="12" width="6" height="5.5" fill="#45dcf0"/></g></svg>
   <span>MI · Design &amp; Code</span>
@@ -134,7 +138,7 @@
 
     <section class="block" id="studio" style="padding-top:0">
       <a class="studio-card" href="studio.html">
-        <img src="img/studio-preview.jpg" alt="Blick in das 3D-Studio von Mohamad Issa: ein nächtliches Büro mit Monitoren und dem leuchtenden MI-Logo" loading="lazy">
+        <picture><source srcset="img/studio-preview.webp" type="image/webp"><img src="img/studio-preview.jpg" alt="Blick in das 3D-Studio von Mohamad Issa: ein nächtliches Büro mit Monitoren und dem leuchtenden MI-Logo" loading="lazy"></picture>
         <div class="studio-txt">
           <div class="label">Noch mehr sehen</div>
           <h2 class="h2">Betreten Sie mein <span class="acc">3D-Studio.</span></h2>
@@ -167,7 +171,7 @@
   </div>
 </main>
 
-<script src="cine.js"></script>
+<script src="cine.js" defer></script>
 <script src="zaehler.js" defer></script>
 </body>
 </html>
