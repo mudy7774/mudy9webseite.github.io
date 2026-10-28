@@ -8,7 +8,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const cvs = document.getElementById('stage'), ctx = cvs.getContext('2d');
   const scenes = [...document.querySelectorAll('.scene')];
-  const reveals = [...document.querySelectorAll('.reveal')].map(el => ({el, at: parseFloat(el.dataset.in || '0'), scene: scenes.indexOf(el.closest('.scene'))}));
+  const reveals = [...document.querySelectorAll('.reveal')].map(el => ({el, at: parseFloat(el.dataset.in || '0'), scene: scenes.indexOf(el.closest('.scene')), kickEl: el.querySelector('.kick')}));
   const loader = document.getElementById('loader'), started = performance.now();
 
   /* ---------- screen mode for the 3D studio ----------
@@ -180,6 +180,38 @@
     return {pts, life: .22};
   }
 
+
+  /* ---------- small labels decode like a signal: random characters settle into the real words ---------- */
+  const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/#*+=';
+  const decoders = [...document.querySelectorAll('.kick, .label')].map(el => {
+    const text = el.textContent; el.setAttribute('aria-label', text);
+    return {el, text, t0: -1, shown: false, done: true};
+  });
+  function decodeStart(d){ if(reduce || soloEl) return; d.t0 = performance.now(); d.done = false; }
+  function decodeTick(now){
+    decoders.forEach(d => {
+      if(d.done) return;
+      const dur = 260 + d.text.length * 28, k = (now - d.t0) / dur;
+      if(k >= 1){ d.el.textContent = d.text; d.done = true; return; }
+      let out = '';
+      for(let i = 0; i < d.text.length; i++){
+        const c = d.text[i];
+        if(c === ' ' || c === '·' || i / d.text.length < k * 1.15 - .15) out += c;          // settled from left to right
+        else out += GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      d.el.textContent = out;
+    });
+  }
+  reveals.forEach(r => { if(r.kickEl) r.kick = decoders.find(d => d.el === r.kickEl); });
+  // labels below the scenes start when they scroll into view; labels inside the scenes start with their text
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      const d = decoders.find(x => x.el === e.target); if(!d || d.el.closest('.scene')) return;
+      if(e.isIntersecting && !d.shown){ d.shown = true; decodeStart(d); } else if(!e.isIntersecting) d.shown = false;
+    }), {threshold: .6});
+    decoders.forEach(d => io.observe(d.el));
+  }
+
   /* ---------- scroll state ---------- */
   function progressOf(el){
     const r = el.getBoundingClientRect(), span = el.offsetHeight - innerHeight;
@@ -206,6 +238,7 @@
       o *= 1 - clamp((p - .9) / .1);
       const v = o.toFixed(2);
       if(v !== r.last){ r.last = v; r.el.style.setProperty('--o', v); }
+      if(r.kick){ const vis = o > .35; if(vis && !r.kick.shown){ r.kick.shown = true; decodeStart(r.kick); } else if(o < .05) r.kick.shown = false; }
     });
     const active = w3 > .5 ? 2 : w2 > .5 ? 1 : 0;
     if(active !== hud.chap){ hud.chap = active; chap.textContent = '0' + (active + 1); }
@@ -213,6 +246,7 @@
     if(docP !== hud.rail){ hud.rail = docP; railBar.style.height = docP; }
     const hintO = scrollY > 40 ? '0' : '1';
     if(hint && hintO !== hud.hint){ hud.hint = hintO; hint.style.opacity = hintO; }
+    decodeTick(performance.now());
     const isPast = past > .6;
     if(isPast !== hud.past){ hud.past = isPast; document.documentElement.classList.toggle('past', isPast); }
 
